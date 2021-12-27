@@ -113,7 +113,7 @@ export function copy(): void {
 
       // Send items to processFileList() to copy if there is anything to copy
       if (Util.hasSome(fileList, 'items')) {
-        fileService.processFileList(fileList.items, userProperties, ss);
+        fileService.processFileList(currFolder, fileList.items, userProperties, ss);
       } else {
         Logger.log('No children found.');
       }

@@ -46,18 +46,23 @@ export default class FileService {
    * Try to copy file to destination parent, or add new folder if it's a folder
    */
   copyFile(
+    currentFolderId: string,
     file: gapi.client.drive.FileResource
   ): gapi.client.drive.FileResource {
+
+    var parentId = file.parents.some(e => e.id == currentFolderId) ?
+      currentFolderId :
+      file.parents[0].id;
     // if folder, use insert, else use copy
     if (file.mimeType == MimeType.FOLDER) {
       var r = this.gDriveService.insertFolder(
         API.copyFileBody(
-          this.properties.map[file.parents[0].id],
+          this.properties.map[parentId],
           file.title,
           MimeType.FOLDER,
           FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
             FileService.getDescriptionWithOriginalLink(file.id) :
-          file.description
+            file.description
         )
       );
 
@@ -70,7 +75,7 @@ export default class FileService {
       return r;
     } else {
       return this.gDriveService.copyFile(
-        API.copyFileBody(this.properties.map[file.parents[0].id],
+        API.copyFileBody(this.properties.map[parentId],
           file.title,
           null,
           FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
@@ -79,6 +84,29 @@ export default class FileService {
         file.id
       );
     }
+  }
+
+  createShortcut(
+    currentFolderId: string,
+    originalFile: gapi.client.drive.FileResource,
+    copiedFileId: string
+  ): gapi.client.drive.FileResource {
+    var parentId = originalFile.parents.some(e => e.id == currentFolderId) ?
+      currentFolderId :
+      originalFile.parents[0].id;
+
+    let shortcutBody = API.copyFileBody(this.properties.map[parentId],
+      originalFile.title,
+      'application/vnd.google-apps.shortcut',
+      FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
+        FileService.getDescriptionWithOriginalLink(originalFile.id) :
+        originalFile.description);
+
+    shortcutBody.shortcutDetails = {
+      'targetId': copiedFileId
+    };
+
+    return this.gDriveService.insertFolder(shortcutBody);
   }
 
   /**
@@ -133,7 +161,7 @@ export default class FileService {
               }
             );
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     }
 
@@ -148,7 +176,7 @@ export default class FileService {
               sendNotificationEmails: 'false'
             }
           );
-        } catch (e) {}
+        } catch (e) { }
       }
     }
 
@@ -191,7 +219,7 @@ export default class FileService {
   ): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
-      this.processFileList(this.properties.leftovers.items, userProperties, ss);
+      this.processFileList(this.properties.currFolderId, this.properties.leftovers.items, userProperties, ss);
     }
   }
 
@@ -201,7 +229,7 @@ export default class FileService {
   ): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
-      this.processFileList(this.properties.retryQueue, userProperties, ss);
+      this.processFileList(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss);
     }
   }
 
@@ -213,6 +241,7 @@ export default class FileService {
    * Get current runtime and decide if processing needs to stop.
    */
   processFileList(
+    currentFolderId: string,
     items: gapi.client.drive.FileResource[],
     userProperties: GoogleAppsScript.Properties.UserProperties,
     ss: GoogleAppsScript.Spreadsheet.Sheet
@@ -229,24 +258,37 @@ export default class FileService {
         continue;
       }
 
+      let createShortcutInsteadOfCopy = false;
       if (FeatureFlag.SKIP_DUPLICATE_ID) {
         // if item has already been completed, skip to avoid infinite loop bugs
         if (this.properties.completed[item.id]) {
-          continue;
+          if (!FeatureFlag.CREATE_SHORTCUTS_WHEN_DUPLICATE) {
+            continue;
+          }
+          else {
+            createShortcutInsteadOfCopy = true;
+          }
         }
       }
 
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
-        var newfile = this.copyFile(item);
 
-        if (FeatureFlag.SKIP_DUPLICATE_ID) {
-          // record that this file has been processed
-          this.properties.completed[item.id] = true;
+        let newfile: gapi.client.drive.FileResource;
+        if (!createShortcutInsteadOfCopy) {
+          newfile = this.copyFile(currentFolderId, item);
+
+          if (FeatureFlag.SKIP_DUPLICATE_ID) {
+            // record that this file has been processed
+            this.properties.completed[item.id] = newfile.id;
+          }
+        }
+        else {
+          newfile = this.createShortcut(currentFolderId, item, this.properties.completed[item.id])
         }
 
         // log the new file as successful
-        Logging.logCopySuccess(ss, item, newfile, this.properties.timeZone);
+        Logging.logCopySuccess(ss, item, newfile, this.properties.timeZone, createShortcutInsteadOfCopy);
       } catch (e) {
         this.properties.retryQueue.unshift({
           id: item.id,
@@ -351,9 +393,8 @@ export default class FileService {
     folderId: string
   ): { spreadsheetId: string; propertiesDocId: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
-    var query = `'${folderId}' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${
-      MimeType.PLAINTEXT
-    }'`;
+    var query = `'${folderId}' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${MimeType.PLAINTEXT
+      }'`;
     var p = this.gDriveService.getFiles(
       query,
       null,
@@ -361,9 +402,8 @@ export default class FileService {
     );
 
     // find copy log
-    query = `'${folderId}' in parents and title contains 'Copy Folder Log' and mimeType = '${
-      MimeType.SHEET
-    }'`;
+    query = `'${folderId}' in parents and title contains 'Copy Folder Log' and mimeType = '${MimeType.SHEET
+      }'`;
     var s = this.gDriveService.getFiles(query, null, 'title desc');
 
     try {
@@ -408,7 +448,7 @@ export default class FileService {
       // recursively check the parents of the parents
       results.push(
         FileService.isDescendant(
-          currentParents.map(function(f) {
+          currentParents.map(function (f) {
             return f.id;
           }),
           maybeParentID

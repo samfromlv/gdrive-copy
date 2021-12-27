@@ -127,12 +127,13 @@ export default class Logging {
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     original: gapi.client.drive.FileResource,
     item: gapi.client.drive.FileResource,
-    timeZone: string
+    timeZone: string,
+    isShortcut: boolean
   ): void {
     var parentId = item.parents && item.parents[0] ? item.parents[0].id : null;
     Logging.log({
       ss,
-      status: 'Copied',
+      status: isShortcut? 'Shortcut created': 'Copied',
       title: item.title,
       originalId: original.id,
       id: item.id,

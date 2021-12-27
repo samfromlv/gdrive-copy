@@ -1,7 +1,9 @@
 const FeatureFlag = {
   SKIP_DUPLICATE_ID: true,
+  //SKIP_DUPLICATE_ID should be on for CREATE_SHORTCUTS_WHEN_DUPLICATE to work
+  CREATE_SHORTCUTS_WHEN_DUPLICATE: true,
   REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK: true,
-  IS_GOOGLE_WORKSPACE: false
+  IS_GOOGLE_WORKSPACE: true
 };
 
 export default FeatureFlag;
