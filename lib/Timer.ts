@@ -1,4 +1,5 @@
 import Properties from './Properties';
+import FeatureFlag from './FeatureFlag';
 
 /**********************************************
  * Tracks runtime of application to avoid
@@ -8,8 +9,20 @@ import Properties from './Properties';
 export default class Timer {
   // Max runtime per day is 90 minutes. Set max as 88 mins for padding.
   // https://developers.google.com/apps-script/guides/services/quotas
-  static MAX_RUNTIME_PER_DAY: number = 88 * 1000 * 60;
-  static MAX_RUNTIME: number = 4.7 * 1000 * 60;
+  
+  static MAX_RUNTIME_PER_DAY_PERSONAL: number = (90-2) * 1000 * 60;
+  static MAX_RUNTIME_PER_DAY_WORKSPACE: number = (6*60-5) * 1000 * 60;
+
+  static MAX_RUNTIME_PER_DAY: number = FeatureFlag.IS_GOOGLE_WORKSPACE? 
+    Timer.MAX_RUNTIME_PER_DAY_WORKSPACE: 
+    Timer.MAX_RUNTIME_PER_DAY_PERSONAL;
+
+  static MAX_RUNTIME_PERSONAL: number = 4.7 * 1000 * 60;
+  static MAX_RUNTIME_WORKSPACE: number = 28 * 1000 * 60;
+
+  static MAX_RUNTIME: number = FeatureFlag.IS_GOOGLE_WORKSPACE? 
+  Timer.MAX_RUNTIME_WORKSPACE: 
+  Timer.MAX_RUNTIME_PERSONAL;
 
   // durations used for setting Triggers
   static SLEEP_TIME_ONE_DAY: number = 24 * 60 * 60 * 1000;
