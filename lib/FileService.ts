@@ -239,7 +239,7 @@ export default class FileService {
         }
 
         // log the new file as successful
-        Logging.logCopySuccess(ss, newfile, this.properties.timeZone);
+        Logging.logCopySuccess(ss, item, newfile, this.properties.timeZone);
       } catch (e) {
         this.properties.retryQueue.unshift({
           id: item.id,

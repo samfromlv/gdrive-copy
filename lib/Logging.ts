@@ -55,6 +55,7 @@ export default class Logging {
     ss = Logging.getDefaultSheet(),
     status = '',
     title = '',
+    originalId = '',
     id = '',
     timeZone = 'GMT-7',
     parentId = '',
@@ -63,6 +64,7 @@ export default class Logging {
     ss?: GoogleAppsScript.Spreadsheet.Sheet;
     status?: string;
     title?: string;
+    originalId?: string;
     id?: string;
     timeZone?: string;
     parentId?: string;
@@ -72,17 +74,21 @@ export default class Logging {
     const columns = {
       status: 0,
       title: 1,
-      link: 2,
-      id: 3,
-      timeCompleted: 4,
-      parentFolderLink: 5,
-      fileSize: 6
+      originalLink: 2,
+      originalId: 3,
+      link: 4,
+      id: 5,
+      timeCompleted: 6,
+      parentFolderLink: 7,
+      fileSize: 8
     };
 
     // set values to array of empty strings, then assign value based on column index
     const values = Object.keys(columns).map(_ => '');
     values[columns.status] = status;
     values[columns.title] = title;
+    values[columns.originalLink] = FileService.getFileLinkForSheet(originalId, title);
+    values[columns.originalId] = originalId;
     values[columns.link] = FileService.getFileLinkForSheet(id, title);
     values[columns.id] = id;
     values[columns.timeCompleted] = Utilities.formatDate(
@@ -119,6 +125,7 @@ export default class Logging {
 
   static logCopySuccess(
     ss: GoogleAppsScript.Spreadsheet.Sheet,
+    original: gapi.client.drive.FileResource,
     item: gapi.client.drive.FileResource,
     timeZone: string
   ): void {
@@ -127,6 +134,7 @@ export default class Logging {
       ss,
       status: 'Copied',
       title: item.title,
+      originalId: original.id,
       id: item.id,
       timeZone,
       parentId,

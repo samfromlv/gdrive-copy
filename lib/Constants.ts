@@ -1,6 +1,6 @@
 // An enum makes more sense here but the compiled enums don't play nicely with Google Apps Script
 export default class Constants {
-  static BaseCopyLogId = '17xHN9N5KxVie9nuFFzCur7WkcMP7aLG4xsPis8Ctxjg';
+  static BaseCopyLogId = '1ZEFwieDBVRZBZ82nCEApxNlGc3qMvRaCuxE6klcmHUU';
   static PropertiesDocTitle =
     'DO NOT DELETE OR MODIFY - will be deleted after copying completes';
   static PropertiesDocDescription =
