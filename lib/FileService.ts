@@ -55,6 +55,8 @@ export default class FileService {
           this.properties.map[file.parents[0].id],
           file.title,
           MimeType.FOLDER,
+          FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
+            FileService.getDescriptionWithOriginalLink(file.id) :
           file.description
         )
       );
@@ -68,7 +70,12 @@ export default class FileService {
       return r;
     } else {
       return this.gDriveService.copyFile(
-        API.copyFileBody(this.properties.map[file.parents[0].id], file.title),
+        API.copyFileBody(this.properties.map[file.parents[0].id],
+          file.title,
+          null,
+          FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
+            FileService.getDescriptionWithOriginalLink(file.id) :
+            file.description),
         file.id
       );
     }
@@ -427,5 +434,12 @@ export default class FileService {
     // return (
     //   '=HYPERLINK("https://drive.google.com/open?id=' + id + '","' + title + '")'
     // );
+  }
+
+  static getDescriptionWithOriginalLink(id: string): string {
+    if (id) {
+      return 'ORIGINAL: ' + FileService.getFileLinkForSheet(id);
+    }
+    return '';
   }
 }
