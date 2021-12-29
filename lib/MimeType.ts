@@ -8,4 +8,5 @@ export default class MimeType {
   static DRAWING = 'application/vnd.google-apps.drawing';
   static FORM = 'application/vnd.google-apps.form';
   static SCRIPT = 'application/vnd.google-apps.script';
+  static SHORTCUT = 'application/vnd.google-apps.shortcut';
 }

@@ -16,7 +16,7 @@ describe('FileService', function() {
     this.gDriveService = new GDriveService();
     this.timer = new Timer();
     this.properties = new Properties(this.gDriveService);
-    this.properties.map = {
+    this.properties.folderIdMap = {
       myParentID: 'newParentID'
     };
     this.fileService = new FileService(

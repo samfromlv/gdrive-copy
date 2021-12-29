@@ -21,7 +21,7 @@ export default class Properties {
   propertiesDocId: string;
   leftovers?: gapi.client.drive.FileListResource;
   retryQueue: gapi.client.drive.FileResource[];
-  map: object;
+  folderIdMap: object;
   remaining: string[];
   timeZone: string;
   totalRuntime: number;
@@ -43,7 +43,7 @@ export default class Properties {
     this.propertiesDocId = '';
     this.leftovers = null;
     this.retryQueue = [];
-    this.map = {};
+    this.folderIdMap = {};
     this.remaining = [];
     this.timeZone = 'GMT-7';
     this.totalRuntime = 0;

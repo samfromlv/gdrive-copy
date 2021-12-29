@@ -117,7 +117,7 @@ export default class Logging {
       ss,
       status: Util.composeErrorMsg(error),
       title: item.title,
-      id: item.id,
+      originalId: item.id,
       timeZone,
       parentId
     });

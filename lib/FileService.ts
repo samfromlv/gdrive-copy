@@ -13,6 +13,7 @@ import Constants from './Constants';
 import ErrorMessages from './ErrorMessages';
 import FeatureFlag from './FeatureFlag';
 import Logging from './Logging';
+import { FileReference } from 'typescript';
 
 export default class FileService {
   gDriveService: GDriveService;
@@ -53,11 +54,12 @@ export default class FileService {
     var parentId = file.parents.some(e => e.id == currentFolderId) ?
       currentFolderId :
       file.parents[0].id;
+
     // if folder, use insert, else use copy
     if (file.mimeType == MimeType.FOLDER) {
       var r = this.gDriveService.insertFolder(
         API.copyFileBody(
-          this.properties.map[parentId],
+          this.properties.folderIdMap[parentId],
           file.title,
           MimeType.FOLDER,
           FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
@@ -70,12 +72,12 @@ export default class FileService {
       this.properties.remaining.push(file.id);
 
       // map source to destination
-      this.properties.map[file.id] = r.id;
+      this.properties.folderIdMap[file.id] = r.id;
 
       return r;
     } else {
       return this.gDriveService.copyFile(
-        API.copyFileBody(this.properties.map[parentId],
+        API.copyFileBody(this.properties.folderIdMap[parentId],
           file.title,
           null,
           FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
@@ -95,9 +97,9 @@ export default class FileService {
       currentFolderId :
       originalFile.parents[0].id;
 
-    let shortcutBody = API.copyFileBody(this.properties.map[parentId],
+    let shortcutBody = API.copyFileBody(this.properties.folderIdMap[parentId],
       originalFile.title,
-      'application/vnd.google-apps.shortcut',
+      MimeType.SHORTCUT,
       FeatureFlag.REPLACE_DESCRIPTION_WITH_ORIGINAL_LINK ?
         FileService.getDescriptionWithOriginalLink(originalFile.id) :
         originalFile.description);
@@ -271,17 +273,42 @@ export default class FileService {
         }
       }
 
+      if (item.mimeType == MimeType.SHORTCUT && !FeatureFlag.CREATE_SHORTCUT_COPIES) {
+        continue;
+      }
+
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
 
         let newfile: gapi.client.drive.FileResource;
         if (!createShortcutInsteadOfCopy) {
-          newfile = this.copyFile(currentFolderId, item);
+          if (item.mimeType == MimeType.SHORTCUT) {
+            let shortcutDetails = this.gDriveService.getShortcutDetails(item.id);
 
-          if (FeatureFlag.SKIP_DUPLICATE_ID) {
-            // record that this file has been processed
-            this.properties.completed[item.id] = newfile.id;
+            let targetId = shortcutDetails.targetId;
+            let copiedTargetId = this.properties.completed[targetId];
+
+            if (copiedTargetId) {
+              createShortcutInsteadOfCopy = true;
+              newfile = this.createShortcut(currentFolderId, item, copiedTargetId)
+            }
+            else {
+              var shortcutTarget = {
+                id: targetId,
+                title: item.title,
+                description: item.description,
+                parents: item.parents,
+                mimeType: shortcutDetails.targetMimeType,
+                owners: item.owners
+              };
+              newfile = this.copyFile(currentFolderId, <gapi.client.drive.FileResource>shortcutTarget);
+            }
           }
+          else {
+            newfile = this.copyFile(currentFolderId, item);
+          }
+          // record that this file has been processed
+          this.properties.completed[item.id] = newfile.id;
         }
         else {
           newfile = this.createShortcut(currentFolderId, item, this.properties.completed[item.id])

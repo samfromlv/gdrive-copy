@@ -65,8 +65,8 @@ export function initialize(
   options.propertiesDocId = propertiesDocId;
 
   // initialize map with top level source and destination folder
-  options.map = {};
-  options.map[options.srcFolderID] = options.destId;
+  options.folderIdMap = {};
+  options.folderIdMap[options.srcFolderID] = options.destId;
   options.remaining = [options.srcFolderID];
 
   // Add link for destination folder to logger spreadsheet

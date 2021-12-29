@@ -45,10 +45,28 @@ export default class GDriveService {
   getPermissions(
     id: string
   ): { items: gapi.client.drive.PermissionResource[] } {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Permissions.list(id);
     });
   }
+
+  /**
+    * Gets file
+    * @param {string} file id
+    * @return {File}
+    */
+  getShortcutDetails(
+    id: string
+  ): {targetId:string, targetMimeType:string } {
+    return this.throttle(function () {
+      var file = DriveApp.getFileById(id);
+      return {
+        targetId: file.getTargetId(),
+        targetMimeType: file.getTargetMimeType(),
+      };
+    });
+  }
+
 
   /**
    * Gets files from query and returns fileList with metadata
@@ -61,7 +79,7 @@ export default class GDriveService {
     pageToken: string | null,
     orderBy?: string
   ): gapi.client.drive.FileListResource {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Files.list({
         q: query,
         maxResults: this.maxResults,
@@ -72,7 +90,7 @@ export default class GDriveService {
   }
 
   downloadFile(id: string): string {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return DriveApp.getFileById(id)
         .getBlob()
         .getDataAsString();
@@ -87,7 +105,7 @@ export default class GDriveService {
     fileID: string,
     mediaData?: object
   ): gapi.client.drive.FileResource {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Files.update(metadata, fileID, mediaData);
     });
   }
@@ -96,7 +114,7 @@ export default class GDriveService {
    * Insert a file with metadata defined by `body`
    */
   insertFolder(body: object): gapi.client.drive.FileResource {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Files.insert(body);
     });
   }
@@ -120,7 +138,7 @@ export default class GDriveService {
     body: gapi.client.drive.FileResource,
     id: string
   ): gapi.client.drive.FileResource {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Files.copy(body, id);
     });
   }
@@ -134,7 +152,7 @@ export default class GDriveService {
     id: string,
     options: object
   ): gapi.client.drive.PermissionResource {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Permissions.insert(body, id, options);
     });
   }
@@ -143,13 +161,13 @@ export default class GDriveService {
    * Removes one permission from file
    */
   removePermission(fileID: string, permissionID: string): void {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return Drive.Permissions.remove(fileID, permissionID);
     });
   }
 
   getRootID(): string {
-    return this.throttle(function() {
+    return this.throttle(function () {
       return DriveApp.getRootFolder().getId();
     });
   }
