@@ -156,7 +156,7 @@ export default class Start extends React.Component {
     const _this = this;
     if (process.env.NODE_ENV === 'production') {
       google.script.run
-        .withSuccessHandler(function(result) {
+        .withSuccessHandler(function (result) {
           _this.setState({
             destFolderID: result.destFolderId,
             copyLogID: result.spreadsheetId
@@ -165,7 +165,7 @@ export default class Start extends React.Component {
           // after initialized, this begins the copy loop
           google.script.run.copy();
         })
-        .withFailureHandler(function(err) {
+        .withFailureHandler(function (err) {
           _this.showError(err.message);
         })
         .initialize({

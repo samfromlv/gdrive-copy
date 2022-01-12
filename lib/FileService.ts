@@ -3,7 +3,6 @@
  **********************************************/
 
 import Util from './Util';
-import { getMetadata } from './public';
 import Properties from './Properties';
 import Timer from './Timer';
 import GDriveService from './GDriveService';
@@ -371,7 +370,7 @@ export default class FileService {
 
     if (
       options.copyTo === 'custom' &&
-      FileService.isDescendant([options.destParentID], options.srcFolderID)
+      this.isDescendant([options.destParentID], options.srcFolderID)
     ) {
       throw new Error(ErrorMessages.Descendant);
     }
@@ -446,7 +445,7 @@ export default class FileService {
   /**
    * Determines if maybeChildID is a descendant of maybeParentID
    */
-  static isDescendant(maybeChildIDs: string[], maybeParentID: string): boolean {
+  isDescendant(maybeChildIDs: string[], maybeParentID: string): boolean {
     // cannot select same folder
     for (var i = 0; i < maybeChildIDs.length; i++) {
       if (maybeChildIDs[i] === maybeParentID) {
@@ -458,7 +457,7 @@ export default class FileService {
 
     for (i = 0; i < maybeChildIDs.length; i++) {
       // get parents of maybeChildID
-      var currentParents = getMetadata(maybeChildIDs[i]).parents;
+      var currentParents = this.gDriveService.getFile(maybeChildIDs[i]).parents;
 
       // if at root or no parents, stop
       if (!currentParents || currentParents.length === 0) {
@@ -474,7 +473,7 @@ export default class FileService {
 
       // recursively check the parents of the parents
       results.push(
-        FileService.isDescendant(
+        this.isDescendant(
           currentParents.map(function (f) {
             return f.id;
           }),

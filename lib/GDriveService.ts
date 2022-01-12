@@ -89,6 +89,15 @@ export default class GDriveService {
     });
   }
 
+  getFile(
+    id: string,
+    url?: string
+  ): gapi.client.drive.FileResource {
+    return this.throttle(function () {
+      return Drive.Files.get(id);
+    });
+  }
+
   downloadFile(id: string): string {
     return this.throttle(function () {
       return DriveApp.getFileById(id)
