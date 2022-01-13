@@ -63,7 +63,7 @@ gulp.task('img', buildImages);
 function buildImages() {
   let img_path = './icons/';
   fs.stat(img_path, (err, stat) => {
-    if (err) fs.mkdir(img_path);
+    if (err) fs.mkdir(img_path, null, ()=>{});
   });
 
   fs.readFile('./images/svg/small-banner.svg', (err, data) => {

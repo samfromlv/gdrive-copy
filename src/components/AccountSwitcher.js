@@ -23,8 +23,8 @@ export default class AccountSwitcher extends React.Component {
     };
     this.loginURL =
       process.env.NODE_ENV === 'production'
-        ? 'https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbxbGNGajrxv-HbX2sVY2OTu7yj9VvxlOMOeQblZFuq7rYm7uyo/exec'
-        : 'https://accounts.google.com/AccountChooser?continue=https://script.google.com/macros/s/AKfycbzKJQO5CBf7WDmrYo8FGDb20YWfoIyUZZhsbF844SI/dev';
+        ? 'https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fa%2Fmacros%2Fyaclass.eu%2Fs%2AKfycbwNOxQYRr1J8lV6IRqnvIGHqm85zi-HMS5ZkfUqTdSUtmKc4uWLwrKmK5aZT3WN7w5q%2Fexec'
+        : 'https://accounts.google.com/AccountChooser?continue=https%3A%2F%2Fscript.google.com%2Fa%2Fmacros%2Fyaclass.eu%2Fs%2AKfycbwNOxQYRr1J8lV6IRqnvIGHqm85zi-HMS5ZkfUqTdSUtmKc4uWLwrKmK5aZT3WN7w5q%2Fdev';
 
     this.handleClick = this.handleClick.bind(this);
     this.handleRequestClose = this.handleRequestClose.bind(this);

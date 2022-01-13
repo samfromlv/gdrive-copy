@@ -27,9 +27,9 @@ export default class Timer {
   // durations used for setting Triggers
   static SLEEP_TIME_ONE_DAY: number = 24 * 60 * 60 * 1000;
 
-  // Trigger time includes runtime and sleep time (1.5 mins) because the trigger
+  // Trigger time includes runtime and sleep time (4 mins) because the trigger
   // is set at the beginning of execution, not the end.
-  static TRIGGER_TIME: number = Timer.MAX_RUNTIME + 1.5 * 1000 * 60;
+  static TRIGGER_TIME: number = Timer.MAX_RUNTIME + 4 * 1000 * 60;
 
   START_TIME: number;
   runtime: number;

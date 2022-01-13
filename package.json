@@ -5,7 +5,7 @@
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
-    "@google/clasp": "^2.0.1",
+    "@google/clasp": "^2.3.0",
     "@types/gapi.drive": "0.0.1",
     "@types/google-apps-script": "0.0.37",
     "autoprefixer": "^9.4.6",
@@ -16,7 +16,7 @@
     "babel-preset-react": "^6.16.0",
     "css-loader": "^0.25.0",
     "extract-text-webpack-plugin": "^2.1.2",
-    "gulp": "~3.9.0",
+    "gulp": "^3.9.1",
     "gulp-hogan": "^2.0.0",
     "gulp-insert": "~0.5.0",
     "gulp-rename": "^1.4.0",
@@ -33,11 +33,11 @@
     "style-loader": "^0.13.1",
     "svg2png": "3.1.0",
     "tslib": "^1.9.3",
-    "typescript": "^3.2.4",
+    "typescript": "^3.9.10",
     "webpack": "^2.5.1"
   },
   "scripts": {
-    "pretest": "tsc lib/*.ts --module commonjs || true",
+    "pretest": "npx tsc ./lib/*.ts --module commonjs || true",
     "posttest": "rm lib/*.js",
     "test": "nyc mocha --grep formatting --invert --compilers js:babel-core/register",
     "prettier-test": "mocha test/formatting/prettier.test.js --compilers js:babel-core/register",

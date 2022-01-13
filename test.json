@@ -1,0 +1,87 @@
+{
+    "owners": [
+        {
+            "permissionId": "02709080174206587163",
+            "kind": "drive#user",
+            "displayName": "migration admin",
+            "picture": {
+                "url": "https://lh3.googleusercontent.com/a/default-user=s64"
+            },
+            "isAuthenticatedUser": true,
+            "emailAddress": "migration@yaclass.at"
+        }
+    ],
+    "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.shortcut",
+    "id": "1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-",
+    "writersCanShare": true,
+    "version": "1",
+    "labels": {
+        "hidden": false,
+        "starred": false,
+        "restricted": false,
+        "viewed": true,
+        "trashed": false
+    },
+    "appDataContents": false,
+    "etag": "\"MTY0MDYyNDAyMTkzMQ\"",
+    "shared": false,
+    "quotaBytesUsed": "0",
+    "lastModifyingUser": {
+        "permissionId": "02709080174206587163",
+        "kind": "drive#user",
+        "displayName": "migration admin",
+        "picture": {
+            "url": "https://lh3.googleusercontent.com/a/default-user=s64"
+        },
+        "isAuthenticatedUser": true,
+        "emailAddress": "migration@yaclass.at"
+    },
+    "modifiedByMeDate": "2021-12-27T16:53:41.931Z",
+    "defaultOpenWithLink": "https://drive.google.com/file/d/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-/view?usp=drivesdk",
+    "ownerNames": [
+        "migration admin"
+    ],
+    "selfLink": "https://www.googleapis.com/drive/v2/files/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-",
+    "openWithLinks": {
+        "338347331578": "https://drive.google.com/file/d/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-/view?usp=drivesdk"
+    },
+    "embedLink": "https://drive.google.com/file/d/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-/preview?usp=drivesdk",
+    "createdDate": "2021-12-27T16:53:41.931Z",
+    "lastModifyingUserName": "migration admin",
+    "copyRequiresWriterPermission": false,
+    "mimeType": "application/vnd.google-apps.shortcut",
+    "copyable": true,
+    "kind": "drive#file",
+    "explicitlyTrashed": false,
+    "modifiedDate": "2021-12-27T16:53:41.931Z",
+    "spaces": [
+        "drive"
+    ],
+    "parents": [
+        {
+            "parentLink": "https://www.googleapis.com/drive/v2/files/1kVey1U6222C4f_nOUOxEQQTGdt1fS8K3",
+            "isRoot": false,
+            "kind": "drive#parentReference",
+            "selfLink": "https://www.googleapis.com/drive/v2/files/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-/parents/1kVey1U6222C4f_nOUOxEQQTGdt1fS8K3",
+            "id": "1kVey1U6222C4f_nOUOxEQQTGdt1fS8K3"
+        }
+    ],
+    "title": "DC1",
+    "alternateLink": "https://drive.google.com/file/d/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-/view?usp=drivesdk",
+    "lastViewedByMeDate": "2021-12-27T16:53:41.931Z",
+    "capabilities": {
+        "canEdit": true,
+        "canCopy": true
+    },
+    "userPermission": {
+        "role": "owner",
+        "pendingOwner": false,
+        "type": "user",
+        "id": "me",
+        "kind": "drive#permission",
+        "selfLink": "https://www.googleapis.com/drive/v2/files/1ZudCxSfv0Z2cDpXQvZeOCMzUnMtJQPw-/permissions/me",
+        "etag": "\"F1PT1uVePi_lvujDPNvGEIMHs4U\""
+    },
+    "editable": true,
+    "markedViewedByMeDate": "1970-01-01T00:00:00.000Z"
+}
