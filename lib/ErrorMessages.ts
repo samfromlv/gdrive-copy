@@ -1,7 +1,7 @@
 // An enum makes more sense here but the compiled enums don't play nicely with Google Apps Script
 export default class ErrorMessages {
   static DataFilesNotFound =
-    'Could not find the necessary data files in the selected folder. Please ensure that you selected the in-progress copy and not the original folder.';
+    'Could not find the necessary data files in the selected folder. Please ensure that you selected folder with in-progress copy (and not original folder) or change owner operation.';
 
   static Descendant =
     'Cannot select destination folder that exists within the source folder';

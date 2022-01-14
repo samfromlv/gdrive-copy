@@ -26,7 +26,6 @@ export default class Resume extends React.Component {
       stepNum: 0,
       srcFolderID: '',
       srcFolderName: '',
-      destFolderID: '',
       success: false,
       successMsg: '',
       error: false,
@@ -137,7 +136,6 @@ export default class Resume extends React.Component {
         .withSuccessHandler(function (results) {
           _this.setState({
             copyLogID: results.spreadsheetId,
-            destFolderID: results.destFolderId
           });
           _this.showSuccess((results.isOwnerChange ? "Change owner " : "Copying ") + 'has resumed');
           // after initialized, this begins the copy loop

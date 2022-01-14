@@ -553,7 +553,7 @@ export default class FileService {
     folderId: string
   ): { spreadsheetId: string; propertiesDocId: string, isOwnerChange: boolean, newOwnerEmail: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
-    var query = `'${folderId}' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${MimeType.PLAINTEXT
+    var query = `'${folderId}' in parents and trashed = false and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${MimeType.PLAINTEXT
       }'`;
     var p = this.gDriveService.getFiles(
       query,
@@ -562,18 +562,18 @@ export default class FileService {
     );
 
     // find copy log
-    query = `'${folderId}' in parents and title contains 'Copy Folder Log' and mimeType = '${MimeType.SHEET
+    query = `'${folderId}' in parents and trashed = false and title contains 'Copy Folder Log' and mimeType = '${MimeType.SHEET
       }'`;
     var s = this.gDriveService.getFiles(query, null, 'title desc');
 
     try {
       var propsFile = p.items[0];
-      var newOwnerEmailMatch = /NewOwner:{{(.+)}}/.exec(p.items[0].title)
+      var newOwnerEmailMatch = /NewOwner:{{(.+)}}/.exec(propsFile.title)
 
       var isOwnerChange = newOwnerEmailMatch && newOwnerEmailMatch.length == 2;
       return {
         spreadsheetId: s.items[0].id,
-        propertiesDocId: p.items[0].id,
+        propertiesDocId: propsFile.id,
         isOwnerChange: isOwnerChange,
         newOwnerEmail: isOwnerChange ? newOwnerEmailMatch[1] : null
       };

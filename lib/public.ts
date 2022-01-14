@@ -248,7 +248,7 @@ export function getUserEmail(): string {
  */
 export function resume(
   options: FrontEndOptions
-): { spreadsheetId: string; destFolderId: string; resuming: boolean, isOwnerChange:boolean } {
+): { spreadsheetId: string; resuming: boolean, isOwnerChange:boolean } {
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
@@ -265,7 +265,6 @@ export function resume(
 
   return {
     spreadsheetId: priorCopy.spreadsheetId,
-    destFolderId: options.srcFolderID,
     isOwnerChange: priorCopy.isOwnerChange,
     resuming: true
   };
