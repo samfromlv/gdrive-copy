@@ -232,7 +232,7 @@ export default class ChangeOwner extends React.Component {
                   href={getDriveSpreadsheetURL(this.state.copyLogID)}
                   target="_blank"
                 >
-                  Copy Log
+                  Operation Log
                 </a>{' '}
                 will tell you when change owner operation is complete. This page will{' '}
                 <b>not</b> update

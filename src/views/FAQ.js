@@ -90,7 +90,7 @@ export default function FAQ() {
         How do I know when it is done?
       </h3>
       <div>
-        You will know it is complete when the Copy Log says "Complete" in cell
+        You will know it is complete when the Operation Log says "Complete" in cell
         C2. In addition, the cell will highlight green.
       </div>
       <a href="#top">Top</a>
@@ -103,7 +103,7 @@ export default function FAQ() {
         should be able to do one of the following to resolve this situation:
         <ol>
           <li>
-            Audit the Copy Log for any errors, and manually copy those files
+            Audit the Operation Log for any errors, and manually copy those files
           </li>
           <li>
             Restart the copy process. Typically, it is best if you wait a few

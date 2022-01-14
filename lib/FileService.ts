@@ -528,7 +528,7 @@ export default class FileService {
     destId: string
   ): gapi.client.drive.FileResource {
     return this.gDriveService.copyFile(
-      API.copyFileBody(destId, `Copy Folder Log ${today}`),
+      API.copyFileBody(destId, Constants.OperationLogFileName + ` ${today}`),
       Constants.BaseCopyLogId
     );
   }

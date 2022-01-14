@@ -11,8 +11,8 @@ const assert = require('assert');
 const fs = require('fs');
 const sinon = require('sinon');
 
-describe('FileService', function() {
-  beforeEach(function() {
+describe('FileService', function () {
+  beforeEach(function () {
     this.gDriveService = new GDriveService();
     this.timer = new Timer();
     this.properties = new Properties(this.gDriveService);
@@ -57,8 +57,8 @@ describe('FileService', function() {
     this.userProperties = PropertiesService.getUserProperties();
   });
 
-  describe('createLoggerSpreadsheet()', function() {
-    it('should return newly created file resource', function() {
+  describe('createLoggerSpreadsheet()', function () {
+    it('should return newly created file resource', function () {
       const stub = sinon.stub(this.gDriveService, 'copyFile');
       const mockCopy = fs
         .readFileSync('test/mocks/copy_file_response_200.json')
@@ -76,7 +76,7 @@ describe('FileService', function() {
       assert.equal(stub.getCall(0).args[1], Constants.BaseCopyLogId);
       const requestBody = {
         description: null,
-        title: 'Copy Folder Log ' + expected.today,
+        title: Constants.OperationLogFileName + ' ' + expected.today,
         parents: [
           {
             kind: 'drive#parentReference',
@@ -89,7 +89,7 @@ describe('FileService', function() {
       stub.restore();
     });
 
-    it('should return error message if this.gDriveService.copyFile fails', function() {
+    it('should return error message if this.gDriveService.copyFile fails', function () {
       const stub = sinon.stub(this.gDriveService, 'copyFile');
       const errMsg = 'Error copying selected folder';
       stub.throws(new Error(errMsg));
@@ -104,8 +104,8 @@ describe('FileService', function() {
     });
   });
 
-  describe('initializeDestinationFolder()', function() {
-    it('should copy to options.srcFolderID when copyTo == same', function() {
+  describe('initializeDestinationFolder()', function () {
+    it('should copy to options.srcFolderID when copyTo == same', function () {
       const stub = sinon.stub(this.gDriveService, 'insertFolder');
       const spy = sinon.spy(this.fileService, 'copyPermissions');
       stub.returns(this.mockFolder);
@@ -147,7 +147,7 @@ describe('FileService', function() {
       spy.restore();
     });
 
-    it('should copy to root when copyTo == root', function() {
+    it('should copy to root when copyTo == root', function () {
       // set up mocks
       const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const stubRoot = sinon.stub(this.gDriveService, 'getRootID');
@@ -200,7 +200,7 @@ describe('FileService', function() {
       spy.restore();
     });
 
-    it('should copy to custom when copyTo == custom', function() {
+    it('should copy to custom when copyTo == custom', function () {
       // set up mocks
       const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const stubDescendant = sinon.stub(FileService, 'isDescendant');
@@ -252,7 +252,7 @@ describe('FileService', function() {
       stubDescendant.restore();
       spy.restore();
     });
-    it('should test `isDescendent()` when copyTo == custom', function() {
+    it('should test `isDescendent()` when copyTo == custom', function () {
       // set up mocks
       const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const stubDescendant = sinon.stub(FileService, 'isDescendant');
@@ -291,7 +291,7 @@ describe('FileService', function() {
       spy.restore();
     });
 
-    it('should copy permissions when copyPermissions == custom', function() {
+    it('should copy permissions when copyPermissions == custom', function () {
       // set up mocks
       const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
       const stubCopyPermissions = sinon.stub(
@@ -343,10 +343,10 @@ describe('FileService', function() {
     });
   });
 
-  describe('copyFile()', function() {
+  describe('copyFile()', function () {
     // folders are files too in GDrive
-    describe('when file is a folder', function() {
-      it('should insert folder', function() {
+    describe('when file is a folder', function () {
+      it('should insert folder', function () {
         // set up mocks
         const request = {
           description: 'myDescription',
@@ -381,7 +381,7 @@ describe('FileService', function() {
         stubInsert.restore();
       });
 
-      it('should add new folder to properties.remaining and map', function() {
+      it('should add new folder to properties.remaining and map', function () {
         // set up mocks
         const stubInsert = sinon.stub(this.gDriveService, 'insertFolder');
         stubInsert.returns(this.mockFolder);
@@ -411,8 +411,8 @@ describe('FileService', function() {
       });
     });
 
-    describe('when file is not a folder', function() {
-      it('should copy a file', function() {
+    describe('when file is not a folder', function () {
+      it('should copy a file', function () {
         // set up mocks
         const stubCopy = sinon.stub(this.gDriveService, 'copyFile');
         stubCopy.returns(this.mockFile);
@@ -453,8 +453,8 @@ describe('FileService', function() {
     });
   });
 
-  describe('processFileList()', function() {
-    it('should return if !timer.canContinue()', function() {
+  describe('processFileList()', function () {
+    it('should return if !timer.canContinue()', function () {
       // set up mocks
       this.userProperties.getProperties().stop = 'true';
       this.timer.update(this.userProperties);
@@ -471,7 +471,7 @@ describe('FileService', function() {
       stubCopy.restore();
     });
 
-    it('should return if items.length == 0', function() {
+    it('should return if items.length == 0', function () {
       // set up mocks
       const stubCopy = sinon.stub(this.fileService, 'copyFile');
 
@@ -483,7 +483,7 @@ describe('FileService', function() {
       stubCopy.restore();
     });
 
-    it('should call copyPermissions if copyPermissions is true and file is native GDrive mimeType', function() {
+    it('should call copyPermissions if copyPermissions is true and file is native GDrive mimeType', function () {
       // set up mocks
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
@@ -506,7 +506,7 @@ describe('FileService', function() {
       assert(
         stubCopyPermissions.calledOnce,
         'this.fileService.copyPermissions not called once. Expected 1, actual: ' +
-          stubCopyPermissions.callCount
+        stubCopyPermissions.callCount
       );
 
       // restore mocks
@@ -516,7 +516,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = false;
     });
 
-    it('should skip copyPermissions if file is not native GDrive mimeType', function() {
+    it('should skip copyPermissions if file is not native GDrive mimeType', function () {
       // set up mocks
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
@@ -539,7 +539,7 @@ describe('FileService', function() {
       assert(
         stubCopyPermissions.notCalled,
         'this.fileService.copyPermissions called. Expected 0, actual: ' +
-          stubCopyPermissions.callCount
+        stubCopyPermissions.callCount
       );
 
       // restore mocks
@@ -549,7 +549,7 @@ describe('FileService', function() {
       this.properties.copyPermissions = false;
     });
 
-    it('should update timer after every file', function() {
+    it('should update timer after every file', function () {
       // set up mocks
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
@@ -579,7 +579,7 @@ describe('FileService', function() {
       stubTimerUpdate.restore();
     });
 
-    it('should push failed item to properties.retryQueue', function() {
+    it('should push failed item to properties.retryQueue', function () {
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
@@ -608,7 +608,7 @@ describe('FileService', function() {
       stubCopy.restore();
     });
 
-    it('should treat retryQueue as FIFO', function() {
+    it('should treat retryQueue as FIFO', function () {
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
         .stub(this.fileService, 'copyFile')
@@ -632,7 +632,7 @@ describe('FileService', function() {
       stubCopy.restore();
     });
 
-    it('should log errors if item has been retried too many tiems', function() {
+    it('should log errors if item has been retried too many tiems', function () {
       // set up mocks
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
@@ -677,7 +677,7 @@ describe('FileService', function() {
       stubLog.restore();
     });
 
-    it('should log copy details if successful', function() {
+    it('should log copy details if successful', function () {
       // set up mocks
       const errMsg = 'failed to copy file';
       const stubCopy = sinon
@@ -703,13 +703,13 @@ describe('FileService', function() {
         stubLog.getCall(0).args[0].spreadsheetStub,
         true,
         'Logging.logCopySuccess not called with "spreadsheetStub". Called with ' +
-          stubLog.getCall(0).args[0]
+        stubLog.getCall(0).args[0]
       );
       assert.deepEqual(
         stubLog.getCall(0).args[1],
         this.mockFile,
         'Logging.logCopySuccess not called with "this.mockFile". Called with ' +
-          stubLog.getCall(0).args[1]
+        stubLog.getCall(0).args[1]
       );
 
       // restore mocks
@@ -719,8 +719,8 @@ describe('FileService', function() {
 
     [[true, 'not ', 3], [false, '', 4]].forEach(
       ([featureFlag, not, numberCopies]) => {
-        describe(`when FeatureFlag.SKIP_DUPLICATE_ID is ${featureFlag}`, function() {
-          it(`should ${not}copy the same ID twice`, function() {
+        describe(`when FeatureFlag.SKIP_DUPLICATE_ID is ${featureFlag}`, function () {
+          it(`should ${not}copy the same ID twice`, function () {
             // set up mocks
             FeatureFlag.SKIP_DUPLICATE_ID = featureFlag;
             const stubCopy = sinon
@@ -749,7 +749,7 @@ describe('FileService', function() {
     );
   });
 
-  describe('isDescendant()', function() {
-    xit('should be tested', function() {});
+  describe('isDescendant()', function () {
+    xit('should be tested', function () { });
   });
 });
