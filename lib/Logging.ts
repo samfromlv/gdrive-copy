@@ -143,6 +143,21 @@ export default class Logging {
     });
   }
 
+  static logChangeOwnerSuccess(
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    original: gapi.client.drive.FileResource,
+    timeZone: string,
+    newOwnerEmail: string
+  ): void {
+    Logging.log({
+      ss,
+      status: 'Owner set to ' + newOwnerEmail,
+      title: original.title,
+      originalId: original.id,
+      timeZone
+    });
+  }
+
   // credit: https://stackoverflow.com/a/18650828
   static bytesToHumanReadable(bytes: number = 0, decimals: number = 2) {
     if (bytes === 0 || bytes === null || bytes === undefined) return '';

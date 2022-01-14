@@ -2,31 +2,35 @@
 
 import React from 'react';
 import { Picker } from '../util/picker';
-import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
 import SelectFolder from '../components/SelectFolder';
-import Page from '../components/Page';
+import Appreciation from '../components/Appreciation';
 import PageChanger from '../components/PageChanger';
-import Panel from '../components/Panel';
+import Page from '../components/Page';
 import Success from '../components/Success';
 import Error from '../components/Error';
-import Appreciation from '../components/Appreciation';
+import Panel from '../components/Panel';
 import Overlay from '../components/Overlay';
 import FolderLink from '../components/FolderLink';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
+import Checkbox from 'material-ui/Checkbox';
+import TextField from 'material-ui/TextField';
 import { Stepper, Step, StepLabel } from 'material-ui/Stepper';
 import { getDriveSpreadsheetURL } from '../util/helpers';
 
-export default class Resume extends React.Component {
+export default class ChangeOwner extends React.Component {
   constructor() {
     super();
 
-    this.maxSteps = 1; // 2 steps, but 0-indexed
+    this.maxSteps = 2; // 3 steps, but 0-indexed
 
     this.state = {
       stepNum: 0,
       srcFolderID: '',
       srcFolderName: '',
-      destFolderID: '',
+      srcParentID: '',
+      newOwnerEmail: '',
+      followShortcuts: false,
       success: false,
       successMsg: '',
       error: false,
@@ -37,12 +41,15 @@ export default class Resume extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
+    this.handleNewOwnerEmail = this.handleNewOwnerEmail.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
+    this.nextView = this.nextView.bind(this);
+    this.prevView = this.prevView.bind(this);
     this.showError = this.showError.bind(this);
     this.showSuccess = this.showSuccess.bind(this);
-    this.processing = this.processing.bind(this);
     this.reset = this.reset.bind(this);
+    this.processing = this.processing.bind(this);
     this.pickerCallback = this.pickerCallback.bind(this);
-    this.nextView = this.nextView.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -55,8 +62,8 @@ export default class Resume extends React.Component {
 
   showError(msg) {
     this.setState({
-      success: false,
       error: true,
+      success: false,
       processing: false,
       errorMsg: msg
     });
@@ -64,8 +71,8 @@ export default class Resume extends React.Component {
 
   showSuccess(msg) {
     this.setState({
-      success: true,
       error: false,
+      success: true,
       processing: false,
       successMsg: msg
     });
@@ -78,17 +85,6 @@ export default class Resume extends React.Component {
     });
   }
 
-  reset() {
-    this.setState({
-      stepNum: 0,
-      error: false,
-      success: false,
-      processing: false,
-      srcFolderID: '',
-      srcFolderName: ''
-    });
-  }
-
   clearSelection(id, name) {
     return () => {
       let state = {};
@@ -98,12 +94,18 @@ export default class Resume extends React.Component {
     };
   }
 
-  nextView() {
-    if (this.state.stepNum === this.maxSteps) {
-      return;
-    } else {
-      this.setState({ stepNum: this.state.stepNum + 1 });
-    }
+  reset() {
+    this.setState({
+      stepNum: 0,
+      error: false,
+      success: false,
+      processing: false,
+      followShortcuts: false,
+      srcFolderID: '',
+      srcFolderName: '',
+      copyTo: 'same',
+      newOwnerEmail: ''
+    });
   }
 
   /**
@@ -128,30 +130,30 @@ export default class Resume extends React.Component {
     }
   }
 
+
   handleSubmit(e) {
+    this.processing('Initializing the change owner');
     const _this = this;
-    this.processing('Resuming the operation');
     if (process.env.NODE_ENV === 'production') {
-      // if not too many triggers, initialize script
       google.script.run
-        .withSuccessHandler(function (results) {
+        .withSuccessHandler(function (result) {
           _this.setState({
-            copyLogID: results.spreadsheetId,
-            destFolderID: results.destFolderId
+            copyLogID: result.spreadsheetId
           });
-          _this.showSuccess((results.isOwnerChange ? "Change owner " : "Copying ") + 'has resumed');
+          _this.showSuccess('Change owner operation has started in background');
           // after initialized, this begins the copy loop
-          if (results.isOwnerChange) {
-            google.script.run.changeOwner();
-          }
-          else {
-            google.script.run.copy();
-          }
+          google.script.run.changeOwner();
         })
         .withFailureHandler(function (err) {
           _this.showError(err.message);
         })
-        .resume(_this.state);
+        .initializeChangeOwner({
+          srcFolderID: this.state.srcFolderID,
+          srcFolderName: this.state.srcFolderName,
+          srcParentID: this.state.srcParentID,
+          newOwnerEmail: this.state.newOwnerEmail,
+          followShortcuts: this.state.followShortcuts
+        });
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {
         return setTimeout(
@@ -159,7 +161,10 @@ export default class Resume extends React.Component {
           1000
         );
       }
-      return setTimeout(() => this.showSuccess('Operation has resumed'), 1000);
+      return setTimeout(
+        () => this.showSuccess('Change owner operation has started in background'),
+        1000
+      );
     }
   }
 
@@ -179,7 +184,39 @@ export default class Resume extends React.Component {
     });
   }
 
+  
+  
+  
+  handleCheck(e) {
+    const settings = {};
+    settings[e.target.id] = e.target.checked;
+    this.setState(settings);
+  }
+  
+  handleNewOwnerEmail(e) {
+    this.setState({
+      newOwnerEmail: e.target.value
+    });
+  }
+
+
+  nextView() {
+    if (this.state.stepNum === this.maxSteps) {
+      return;
+    } else {
+      this.setState({ stepNum: this.state.stepNum + 1 });
+    }
+  }
+
+  prevView() {
+    this.setState({ stepNum: this.state.stepNum - 1 });
+  }
+
   render() {
+    const radioStyle = {
+      marginBottom: 16
+    };
+
     if (this.state.success && !this.state.error) {
       return (
         <div>
@@ -187,7 +224,7 @@ export default class Resume extends React.Component {
             Things you should know:
             <ul>
               <li>
-                You can close this window, operation will continue in background
+                You can close this window, change owner operation will continue in background
               </li>
               <li>
                 The{' '}
@@ -195,20 +232,20 @@ export default class Resume extends React.Component {
                   href={getDriveSpreadsheetURL(this.state.copyLogID)}
                   target="_blank"
                 >
-                  Operation Log
+                  Copy Log
                 </a>{' '}
-                will tell you when operation is complete. This page will{' '}
+                will tell you when change owner operation is complete. This page will{' '}
                 <b>not</b> update
               </li>
               <li>
-                Target:{' '}
+                Folder:{' '}
                 <FolderLink
                   folderID={this.state.srcFolderID}
                   name={this.state.srcFolderName}
                 />
               </li>
               <li>
-                Please do not try to start another operation until this one is
+                Please do not try to start another copy or change owner operation until this one is
                 finished
               </li>
             </ul>
@@ -229,14 +266,15 @@ export default class Resume extends React.Component {
             <StepLabel>Select folder</StepLabel>
           </Step>
           <Step>
+            <StepLabel>New onwer email</StepLabel>
+          </Step>
+          <Step>
             <StepLabel>Review and confirm</StepLabel>
           </Step>
         </Stepper>
 
         <PageChanger activeStep={this.state.stepNum}>
-          <Page stepNum={0} label="Which folder are you resuming?">
-            Please select the folder copy, not the original folder.
-            For change owner select target folder.
+          <Page stepNum={0} label="In which folder would you like to change owner of your files?">
             <SelectFolder
               handleFolderSelect={this.handleFolderSelect}
               showError={this.showError}
@@ -257,13 +295,68 @@ export default class Resume extends React.Component {
             )}
           </Page>
 
-          <Page stepNum={1} label="Resume the operation">
-            <Panel label="Selected folder">
+          <Page label="Enter new owner email" stepNum={1}>
+            <TextField
+              key="newOwnerEmail"
+              id="newOwnerEmail"
+              name="newOwnerEmail"
+              onChange={this.handleNewOwnerEmail}
+              floatingLabelText="New owner email"
+              value={this.state.newOwnerEmail}
+            />
+             <Checkbox
+              checked={this.state['followShortcuts']}
+              onCheck={this.handleCheck}
+              id="followShortcuts"
+              label={
+                <span>
+                  Follow shortcuts
+                  <br />
+                  <br />
+                  Tool will crawl all shortcuts and change owner in referenced folders
+                  and their subfolders, even if they are outside selected folder.
+                  Please be carefull, this may produce unexpected results.
+                  Use Drive search, type:shortcut and search within folder to see all shortcuts.
+                </span>
+              }
+            />
+            <div className="controls">
+              <FlatButton
+                label="Go back"
+                onClick={this.reset}
+                style={{ marginRight: '1em' }}
+              />
+              <RaisedButton
+                onClick={this.nextView}
+                primary={true}
+                label="Next"
+              />
+            </div>
+          </Page>
+
+          <Page label="Review and start change owner operation" stepNum={2}>
+            <Panel>
+              <h3>Folder</h3>
+
               <FolderLink
                 folderID={this.state.srcFolderID}
                 name={this.state.srcFolderName}
               />
+
+              <br />
+              <br />
+              <h3>New owner email</h3>
+              <span>{this.state.newOwnerEmail}</span>
+
+              <br />
+              <br />
+              <h3>Follow shortcuts?</h3>
+              <div>
+                {this.state.followShortcuts ? 'Yes' : 'No'}
+              </div>
+             
             </Panel>
+
             <div className="controls">
               <FlatButton
                 label="Start over"
@@ -271,7 +364,7 @@ export default class Resume extends React.Component {
                 style={{ marginRight: '1em' }}
               />
               <RaisedButton
-                label="Resume operation"
+                label="Change Owner"
                 primary={true}
                 onClick={this.handleSubmit}
               />

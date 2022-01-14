@@ -57,7 +57,7 @@ export function initialize(
   // Create Files used in copy process
   destFolder = fileService.initializeDestinationFolder(options, today);
   spreadsheet = fileService.createLoggerSpreadsheet(today, destFolder.id);
-  propertiesDocId = fileService.createPropertiesDocument(destFolder.id);
+  propertiesDocId = fileService.createPropertiesDocumentCopy(destFolder.id);
 
   // Build/add properties to options so it can be saved to the properties doc
   options.destId = destFolder.id;
@@ -135,6 +135,98 @@ export function initialize(
   };
 }
 
+export function initializeChangeOwner(
+  options: ChangeOwnerFrontEndOptions
+): {
+  spreadsheetId: string;
+  newOwnerEmail: string;
+  resuming: boolean;
+} {
+  var spreadsheet: gapi.client.drive.FileResource,
+    propertiesDocId: string,
+    today: string = Utilities.formatDate(new Date(), 'GMT-5', 'MM-dd-yyyy'),
+    gDriveService = new GDriveService(),
+    timer = new Timer(),
+    properties = new Properties(gDriveService),
+    fileService = new FileService(gDriveService, timer, properties);
+
+  // Create Files used in copy process
+  spreadsheet = fileService.createLoggerSpreadsheet(today, options.srcFolderID);
+  propertiesDocId = fileService.createPropertiesDocumentChangeOwner(options.srcFolderID, options.newOwnerEmail);
+
+  // Build/add properties to options so it can be saved to the properties doc
+  options.spreadsheetId = spreadsheet.id;
+  options.propertiesDocId = propertiesDocId;
+
+  // initialize map with top level source and destination folder
+  options.remaining = [options.srcFolderID];
+
+  // Add link for destination folder to logger spreadsheet
+  try {
+    SpreadsheetApp.openById(spreadsheet.id)
+      .getSheetByName('Log')
+      .getRange(2, 5)
+      .setValue(
+        FileService.getFileLinkForSheet(options.srcFolderID, options.srcFolderName)
+      );
+  } catch (e) {
+    console.error('unable to set folder URL in copy log');
+    console.error(e);
+  }
+
+  // 2018-09-06: this often throws a "Bad Value" error, not sure of the cause
+  // but this data is low importance
+  try {
+    options.timeZone = SpreadsheetApp.openById(
+      spreadsheet.id
+    ).getSpreadsheetTimeZone();
+  } catch (e) {
+    options.timeZone = 'GMT-7';
+  }
+
+  // Adding a row to status list prevents weird style copying when logging
+  try {
+    SpreadsheetApp.openById(spreadsheet.id)
+      .getSheetByName('Log')
+      .getRange(5, 1, 1, 5)
+      .setValues([
+        [
+          Constants.StartChangeOwnerText,
+          '',
+          '',
+          '',
+          Utilities.formatDate(
+            new Date(),
+            options.timeZone,
+            'MM-dd-yy hh:mm:ss aaa'
+          )
+        ]
+      ]);
+  } catch (e) {
+    console.error('unable to write "started operation"');
+    console.error(e);
+  }
+
+  // Set UserProperties values and save properties to propertiesDoc
+  Properties.setUserPropertiesStore(
+    options.spreadsheetId,
+    options.propertiesDocId,
+    "",
+    'false'
+  );
+  Properties.save(options, gDriveService);
+
+  // Delete all existing triggers so no scripts overlap
+  deleteAllTriggers();
+
+  // Return IDs of created destination folder and logger spreadsheet
+  return {
+    spreadsheetId: options.spreadsheetId,
+    newOwnerEmail: options.newOwnerEmail,
+    resuming: false
+  };
+}
+
 export function getMetadata(
   id: string,
   url?: string
@@ -156,26 +248,29 @@ export function getUserEmail(): string {
  */
 export function resume(
   options: FrontEndOptions
-): { spreadsheetId: string; destFolderId: string; resuming: boolean } {
+): { spreadsheetId: string; destFolderId: string; resuming: boolean, isOwnerChange:boolean } {
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
     fileService = new FileService(gDriveService, timer, properties);
+    
   var priorCopy = fileService.findPriorCopy(options.srcFolderID);
 
   Properties.setUserPropertiesStore(
     priorCopy.spreadsheetId,
     priorCopy.propertiesDocId,
-    options.destFolderId,
+    options.srcFolderID,
     'true'
   );
 
   return {
     spreadsheetId: priorCopy.spreadsheetId,
     destFolderId: options.srcFolderID,
+    isOwnerChange: priorCopy.isOwnerChange,
     resuming: true
   };
 }
+
 
 /**
  * Set a flag in the userProperties store that will cancel the current copy folder process

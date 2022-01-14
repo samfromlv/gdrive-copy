@@ -16,6 +16,8 @@ export default class Properties {
   copyTo: string;
   destParentID: string;
   destId: string;
+  newOwnerEmail: string;
+  followShortcuts: boolean;
   currFolderId?: string;
   spreadsheetId: string;
   propertiesDocId: string;
@@ -39,6 +41,8 @@ export default class Properties {
     this.copyTo = '';
     this.destParentID = '';
     this.destId = '';
+    this.newOwnerEmail = '';
+    this.followShortcuts = false;
     this.spreadsheetId = '';
     this.propertiesDocId = '';
     this.leftovers = null;
@@ -103,7 +107,7 @@ export default class Properties {
    * Stringify properties argument and save to file in user's Drive
    */
   static save(
-    properties: Properties | FrontEndOptions,
+    properties: Properties | FrontEndOptions | ChangeOwnerFrontEndOptions,
     gDriveService: GDriveService
   ): gapi.client.drive.FileResource {
     try {
@@ -141,4 +145,5 @@ export default class Properties {
     userProperties.setProperty('resuming', resuming);
     userProperties.setProperty('stop', 'false');
   }
+
 }

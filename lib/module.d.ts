@@ -3,9 +3,7 @@
  */
 type FrontEndOptions = {
   srcFolderID: string;
-  srcParentId: string;
   srcFolderName: string;
-  srcFolderURL: string;
   srcParentID: string;
   destFolderName: string;
   copyPermissions: boolean;
@@ -15,10 +13,22 @@ type FrontEndOptions = {
   spreadsheetId?: string;
   propertiesDocId?: string;
   leftovers?: gapi.client.drive.FileListResource;
-  map?: object;
+  folderIdMap?: object;
   remaining?: string[];
   timeZone?: string;
   destFolderId?: string;
+};
+
+type ChangeOwnerFrontEndOptions = {
+  srcFolderID: string;
+  srcFolderName: string;
+  newOwnerEmail: string;
+  followShortcuts: boolean;
+  spreadsheetId?: string;
+  propertiesDocId?: string;
+  leftovers?: gapi.client.drive.FileListResource;
+  remaining?: string[];
+  timeZone?: string;
 };
 
 /**

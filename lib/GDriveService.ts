@@ -131,12 +131,12 @@ export default class GDriveService {
   /**
    * Insert file with fixed metadata used to store properties
    */
-  insertBlankFile(parentID: string): gapi.client.drive.FileResource {
+  insertBlankFile(parentID: string, name: string): gapi.client.drive.FileResource {
     // doesn't need to be throttled because it returns a throttled function
     return this.insertFolder(
       API.copyFileBody(
         parentID,
-        Constants.PropertiesDocTitle,
+        name,
         MimeType.PLAINTEXT,
         Constants.PropertiesDocDescription
       )

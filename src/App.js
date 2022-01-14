@@ -4,6 +4,7 @@ import React from 'react';
 import { getScript } from './util/picker';
 import Start from './views/Start';
 import Resume from './views/Resume';
+import ChangeOwner from './views/ChangeOwner';
 import Pause from './views/Pause';
 import About from './views/About';
 import FAQ from './views/FAQ';
@@ -64,6 +65,10 @@ export default class App extends React.Component {
 
             <Tab label="Pause">
               <Pause />
+            </Tab>
+
+            <Tab label="Change owner">
+              <ChangeOwner isAPILoaded={this.state.isAPILoaded} />
             </Tab>
 
             <Tab label="FAQ">

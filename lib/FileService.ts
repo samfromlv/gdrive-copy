@@ -87,6 +87,35 @@ export default class FileService {
     }
   }
 
+  changeOwner(
+    currentFolderId: string,
+    file: gapi.client.drive.FileResource,
+    newOwnerEmail: string
+  ): boolean {
+
+    // if folder, use insert, else use copy
+    if (file.mimeType == MimeType.FOLDER) {
+      // Update list of remaining folders
+      this.properties.remaining.push(file.id);
+    }
+    if (file.owners[0].isAuthenticatedUser) {
+      this.gDriveService.insertPermission(
+        API.permissionBodyValue(
+          "owner",
+          "user",
+          newOwnerEmail
+        ),
+        file.id,
+        {
+          sendNotificationEmails: 'false'
+        }
+      );
+
+      return true;
+    }
+    return false;
+  }
+
   createShortcut(
     currentFolderId: string,
     originalFile: gapi.client.drive.FileResource,
@@ -224,6 +253,16 @@ export default class FileService {
     }
   }
 
+  handleLeftoversChangeOwner(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
+    if (Util.hasSome(this.properties.leftovers, 'items')) {
+      this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
+      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.leftovers.items, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts);
+    }
+  }
+
   handleRetries(
     userProperties: GoogleAppsScript.Properties.UserProperties,
     ss: GoogleAppsScript.Spreadsheet.Sheet
@@ -231,6 +270,16 @@ export default class FileService {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
       this.processFileList(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss);
+    }
+  }
+
+  handleRetriesChangeOwner(
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet
+  ): void {
+    if (Util.hasSome(this.properties, 'retryQueue')) {
+      this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
+      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts);
     }
   }
 
@@ -276,10 +325,10 @@ export default class FileService {
         continue;
       }
 
+      let newfile: gapi.client.drive.FileResource;
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
 
-        let newfile: gapi.client.drive.FileResource;
         if (!createShortcutInsteadOfCopy) {
           if (item.mimeType == MimeType.SHORTCUT) {
             let shortcutDetails = this.gDriveService.getShortcutDetails(item.id);
@@ -340,6 +389,85 @@ export default class FileService {
         }
       } catch (e) {
         // TODO: logging needed for failed permissions copying?
+      }
+
+      // Update current runtime and user stop flag
+      this.timer.update(userProperties);
+    }
+  }
+
+  processFileListChangeOwner(
+    currentFolderId: string,
+    items: gapi.client.drive.FileResource[],
+    userProperties: GoogleAppsScript.Properties.UserProperties,
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    newOwnerEmail: string,
+    followSchortcuts: boolean
+  ): void {
+    while (items.length > 0 && this.timer.canContinue()) {
+      // Get next file from passed file list.
+      var item = items.pop();
+
+      if (item.id == this.properties.spreadsheetId ||
+        item.id == this.properties.propertiesDocId) {
+        continue;
+      }
+
+      if (
+        item.numberOfAttempts &&
+        item.numberOfAttempts > this.maxNumberOfAttempts
+      ) {
+        Logging.logCopyError(ss, item.error, item, this.properties.timeZone);
+        continue;
+      }
+
+      if (FeatureFlag.SKIP_DUPLICATE_ID) {
+        // if item has already been completed, skip to avoid infinite loop bugs
+        if (this.properties.completed[item.id]) {
+          continue;
+        }
+      }
+
+      // Copy each (files and folders are both represented the same in Google Drive)
+      try {
+
+        let changed: boolean = false;
+        if (item.mimeType == MimeType.SHORTCUT) {
+          if (!followSchortcuts) {
+            continue;
+          }
+          let shortcutDetails = this.gDriveService.getShortcutDetails(item.id);
+          let targetId = shortcutDetails.targetId;
+          var shortcutTarget = {
+            id: targetId,
+            title: item.title,
+            description: item.description,
+            parents: item.parents,
+            mimeType: shortcutDetails.targetMimeType,
+            owners: item.owners
+          };
+          changed = this.changeOwner(currentFolderId, <gapi.client.drive.FileResource>shortcutTarget, newOwnerEmail);
+        }
+        else {
+          changed = this.changeOwner(currentFolderId, item, newOwnerEmail);
+        }
+        // log the new file as successful
+        if (changed) {
+          Logging.logChangeOwnerSuccess(ss, item, this.properties.timeZone, newOwnerEmail);
+        }
+      } catch (e) {
+        this.properties.retryQueue.unshift({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          parents: item.parents,
+          mimeType: item.mimeType,
+          error: e,
+          owners: item.owners,
+          numberOfAttempts: item.numberOfAttempts
+            ? item.numberOfAttempts + 1
+            : 1
+        });
       }
 
       // Update current runtime and user stop flag
@@ -410,14 +538,20 @@ export default class FileService {
    * Create document as plain text.
    * This will be deleted upon script completion.
    */
-  createPropertiesDocument(destId: string): string {
-    var propertiesDoc = this.gDriveService.insertBlankFile(destId);
+  createPropertiesDocumentCopy(destId: string): string {
+    var propertiesDoc = this.gDriveService.insertBlankFile(destId, Constants.PropertiesDocCopyTitle);
+    return propertiesDoc.id;
+  }
+
+  createPropertiesDocumentChangeOwner(destId: string, newOwnerEmail: string): string {
+    let title = Constants.PropertiesDocChangeOwnerPrefix + newOwnerEmail + "}}";
+    var propertiesDoc = this.gDriveService.insertBlankFile(destId, title);
     return propertiesDoc.id;
   }
 
   findPriorCopy(
     folderId: string
-  ): { spreadsheetId: string; propertiesDocId: string } {
+  ): { spreadsheetId: string; propertiesDocId: string, isOwnerChange: boolean, newOwnerEmail: string } {
     // find DO NOT MODIFY OR DELETE file (e.g. propertiesDoc)
     var query = `'${folderId}' in parents and title contains 'DO NOT DELETE OR MODIFY' and mimeType = '${MimeType.PLAINTEXT
       }'`;
@@ -433,9 +567,15 @@ export default class FileService {
     var s = this.gDriveService.getFiles(query, null, 'title desc');
 
     try {
+      var propsFile = p.items[0];
+      var newOwnerEmailMatch = /NewOwner:{{(.+)}}/.exec(p.items[0].title)
+
+      var isOwnerChange = newOwnerEmailMatch && newOwnerEmailMatch.length == 2;
       return {
         spreadsheetId: s.items[0].id,
-        propertiesDocId: p.items[0].id
+        propertiesDocId: p.items[0].id,
+        isOwnerChange: isOwnerChange,
+        newOwnerEmail: isOwnerChange ? newOwnerEmailMatch[1] : null
       };
     } catch (e) {
       throw new Error(ErrorMessages.DataFilesNotFound);
