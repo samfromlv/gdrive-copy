@@ -29,7 +29,7 @@ export default function About() {
         </a>
         . Feel free to reuse or distribute this code in any way you see fit. You
         can find the source code on{' '}
-        <a href="http://www.github.com/ericyd/gdrive-copy" target="_blank">
+        <a href="https://github.com/samfromlv/gdrive-copy" target="_blank">
           Github
         </a>
         .
@@ -39,10 +39,10 @@ export default function About() {
         If you would like to run your own version of the code, please follow
         deployment instructions at{' '}
         <a
-          href="https://github.com/ericyd/gdrive-copy#deploying-app"
+          href="https://github.com/samfromlv/gdrive-copy#deploying-app"
           target="_blank"
         >
-          https://github.com/ericyd/gdrive-copy#deploying-app
+          https://github.com/samfromlv/gdrive-copy#deploying-app
         </a>
       </p>
 
@@ -69,7 +69,7 @@ export default function About() {
       <p>
         Please see the{' '}
         <a
-          href="https://github.com/ericyd/gdrive-copy/blob/master/PRIVACY_POLICY.md"
+          href="https://github.com/samfromlv/gdrive-copy/blob/feature/new-features/PRIVACY_POLICY.md"
           target="_blank"
         >
           Privacy Policy

@@ -1,10 +1,10 @@
-# Privacy Policy for Copy Folder
+# Privacy Policy for Yk Copy Folder
 
 At
-https://script.google.com/macros/s/AKfycbxbGNGajrxv-HbX2sVY2OTu7yj9VvxlOMOeQblZFuq7rYm7uyo/exec,
-the site hereafter referred to as "Copy Folder", we consider the privacy of our
+https://script.google.com/a/macros/yaclass.eu/s/AKfycbwNOxQYRr1J8lV6IRqnvIGHqm85zi-HMS5ZkfUqTdSUtmKc4uWLwrKmK5aZT3WN7w5q/exec,
+the site hereafter referred to as "Yk Copy Folder", we consider the privacy of our
 visitors to be extremely important. This privacy policy document describes in
-detail the types of personal information is collected and recorded by Copy
+detail the types of personal information is collected and recorded by Yk Copy
 Folder and how we use it.
 
 ## How We Collect and Use Information
@@ -16,12 +16,12 @@ Google Drive account.
 ### Information you provide us directly:
 
 Google authorization will require your username and password to access this
-service. The Copy Folder service does not store this information or interact
+service. The Yk Copy Folder service does not store this information or interact
 with it directly.
 
 ### Revoking access
 
-You may unlink the Copy Folder service from your Google Account using these
+You may unlink the Yk Copy Folder service from your Google Account using these
 steps:
 
 * Go to <a href="https://accounts.google.com">accounts.google.com</a>
@@ -30,7 +30,7 @@ steps:
 * Select app you want &amp; click REMOVE button
 
 These instructions are subject to change without notice as they are controlled
-by Google and not Copy Folder. They are provided here as a convenience only.
+by Google and not Yk Copy Folder. They are provided here as a convenience only.
 
 ## Licensing and Liability
 
@@ -42,7 +42,7 @@ code in any way you see fit.
 
 ## Log Files
 
-Like many other Web sites, Copy Folder may use log files. These files merely
+Like many other Web sites, Yk Copy Folder may use log files. These files merely
 logs visitors to the site - usually a standard procedure for hosting companies
 and a part of hosting services's analytics. The information inside the log files
 includes internet protocol (IP) addresses, browser type, Internet Service
@@ -54,13 +54,13 @@ personally identifiable.
 
 ## Cookies and Web Beacons
 
-Copy Folder does not use cookies.
+Yk Copy Folder does not use cookies.
 
 ## DoubleClick DART Cookie
 
-* Google, as a third party vendor, may use cookies to serve ads on Copy Folder.
+* Google, as a third party vendor, may use cookies to serve ads on Yk Copy Folder.
 * Google's use of the DART cookie enables it to serve ads to our site's visitors
-  based upon their visit to Copy Folder and other sites on the Internet.
+  based upon their visit to Yk Copy Folder and other sites on the Internet.
 * Users may opt out of the use of the DART cookie by visiting the Google ad and
   content network privacy policy at the following URL -
   http://www.google.com/privacy_ads.html
@@ -68,16 +68,16 @@ Copy Folder does not use cookies.
 ## Our Advertising Partners
 
 Currently we do not have any advertising partners. However, the site does
-include some external links. Copy Folder is not responsible for your information
+include some external links. Yk Copy Folder is not responsible for your information
 once you leave our site.
 
 ## Children's Information
 
 We believe it is important to provide added protection for children online. We
 encourage parents and guardians to spend time online with their children to
-observe, participate in and/or monitor and guide their online activity. Copy
+observe, participate in and/or monitor and guide their online activity. Yk Copy
 Folder does not knowingly collect any personally identifiable information from
-children under the age of 13. If a parent or guardian believes that Copy Folder
+children under the age of 13. If a parent or guardian believes that Yk Copy Folder
 has in its database the personally-identifiable information of a child under the
 age of 13, please contact us immediately (using the contact in the first
 paragraph) and we will use our best efforts to promptly remove such information
@@ -97,7 +97,7 @@ terms.
 
 ## Update
 
-This Privacy Policy was last updated on: Sunday, December 3rd, 2017.
+This Privacy Policy was last updated on: January 22nd, 2022.
 
 Should we update, amend or make any changes to our privacy policy, those changes
 will be posted here.

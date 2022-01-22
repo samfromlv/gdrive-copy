@@ -134,7 +134,7 @@ export default function FAQ() {
         Please use the "Pause" function built into the app and open an{' '}
         <a
           className="github-button"
-          href="https://github.com/ericyd/gdrive-copy/issues"
+          href="https://github.com/samfromlv/gdrive-copy/issues"
           aria-label="Issue ericyd/gdrive-copy on GitHub"
           target="_blank"
         >

@@ -15,12 +15,9 @@ export default function Appreciation(props) {
   return (
     <Panel label="Want to show your appreciation?">
       <div className="list-item-large">
-        The developer does not upkeep this project anymore. However, if you'd
-        like to show your support in the form of monetary contribution, please
-        consider giving to{' '}
-        <a href="https://secure.actblue.com/donate/ms_blm_homepage_2019" target="_blank">
-          Black Lives Matter Global Network
-        </a>
+        If you'd like to show your support in the form
+        of monetary contribution, please consider giving to
+        <a href="https://www.paypal.com/donate/?business=MSLDZBZ8YLYJN&amp;no_recurring=0&amp;currency_code=EUR" target="_blank">Donate</a>
         .
       </div>
       <Divider />
@@ -28,7 +25,7 @@ export default function Appreciation(props) {
         or, you can
         <a
           className="github-button"
-          href="https://github.com/ericyd/gdrive-copy"
+          href="https://github.com/samfromlv/gdrive-copy"
           aria-label="Star ericyd/gdrive-copy on GitHub"
           target="_blank"
         >

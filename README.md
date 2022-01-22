@@ -33,7 +33,7 @@ of shared information when someone leaves an organization.
 ## Privacy
 
 Please see the
-[Privacy Policy](https://github.com/ericyd/gdrive-copy/blob/master/PRIVACY_POLICY.md).
+[Privacy Policy](https://github.com/samfromlv/gdrive-copy/blob/feature/new-features/PRIVACY_POLICY.md).
 
 This app does not store any data relating to your account or Google Drive
 contents.
@@ -79,7 +79,7 @@ Note: some build commands use commands which may not be available on standard Wi
 
 ## Bugs? Questions?
 
-Please open an [issue on Github](https://github.com/ericyd/gdrive-copy/issues).
+Please open an [issue on Github](https://github.com/samfromlv/gdrive-copy/issues).
 
 # Project maintenance
 
