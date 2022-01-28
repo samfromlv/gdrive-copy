@@ -3040,6 +3040,7 @@
                 srcParentID: "",
                 newOwnerEmail: "",
                 followShortcuts: !1,
+                removePermissions: !1,
                 success: !1,
                 successMsg: "",
                 error: !1,
@@ -3103,9 +3104,9 @@
                     success: !1,
                     processing: !1,
                     followShortcuts: !1,
+                    removePermissions: !1,
                     srcFolderID: "",
                     srcFolderName: "",
-                    copyTo: "same",
                     newOwnerEmail: ""
                 });
             }
@@ -3134,7 +3135,8 @@
                     srcFolderName: this.state.srcFolderName,
                     srcParentID: this.state.srcParentID,
                     newOwnerEmail: this.state.newOwnerEmail,
-                    followShortcuts: this.state.followShortcuts
+                    followShortcuts: this.state.followShortcuts,
+                    removePermissions: this.state.removePermissions
                 });
             }
         }, {
@@ -3190,7 +3192,7 @@
                     label: this.state.processingMsg
                 }), this.state.error && !this.state.success && s.default.createElement(x.default, null, this.state.errorMsg), s.default.createElement(A.Stepper, {
                     activeStep: this.state.stepNum
-                }, s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Select folder")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "New onwer email")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Review and confirm"))), s.default.createElement(y.default, {
+                }, s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Select folder")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Settings")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Review and confirm"))), s.default.createElement(y.default, {
                     activeStep: this.state.stepNum
                 }, s.default.createElement(v.default, {
                     stepNum: 0,
@@ -3219,12 +3221,17 @@
                     onChange: this.handleNewOwnerEmail,
                     floatingLabelText: "New owner email",
                     value: this.state.newOwnerEmail
-                }), s.default.createElement(N.default, {
+                }), s.default.createElement("br", null), "Leave empty to keep yourself as owner", s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement(N.default, {
+                    checked: this.state.removePermissions,
+                    onCheck: this.handleCheck,
+                    id: "removePermissions",
+                    label: s.default.createElement("span", null, "Remove all user permissions and make restricted")
+                }), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement(N.default, {
                     checked: this.state.followShortcuts,
                     onCheck: this.handleCheck,
                     id: "followShortcuts",
-                    label: s.default.createElement("span", null, "Follow shortcuts", s.default.createElement("br", null), s.default.createElement("br", null), "Tool will crawl all shortcuts and change owner in referenced folders and their subfolders, even if they are outside selected folder. Please be carefull, this may produce unexpected results. Use Drive search, type:shortcut and search within folder to see all shortcuts.")
-                }), s.default.createElement("div", {
+                    label: s.default.createElement("span", null, "Follow shortcuts")
+                }), s.default.createElement("br", null), "Tool will crawl all shortcuts and change owner in referenced folders and their subfolders, even if they are outside selected folder. Please be carefull, this may produce unexpected results. Use Drive search, type:shortcut and search within folder to see all shortcuts.", s.default.createElement("div", {
                     className: "controls"
                 }, s.default.createElement(F.default, {
                     label: "Go back",
@@ -3242,7 +3249,7 @@
                 }, s.default.createElement(_.default, null, s.default.createElement("h3", null, "Folder"), s.default.createElement(P.default, {
                     folderID: this.state.srcFolderID,
                     name: this.state.srcFolderName
-                }), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("h3", null, "New owner email"), s.default.createElement("span", null, this.state.newOwnerEmail), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("h3", null, "Follow shortcuts?"), s.default.createElement("div", null, this.state.followShortcuts ? "Yes" : "No")), s.default.createElement("div", {
+                }), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("h3", null, "New owner email"), s.default.createElement("span", null, this.state.newOwnerEmail ? this.state.newOwnerEmail : "<keep me as owner>"), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("h3", null, "Remove permissions and make restricted?"), s.default.createElement("div", null, this.state.removePermissions ? "Yes" : "No"), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("h3", null, "Follow shortcuts?"), s.default.createElement("div", null, this.state.followShortcuts ? "Yes" : "No")), s.default.createElement("div", {
                     className: "controls"
                 }, s.default.createElement(F.default, {
                     label: "Start over",
