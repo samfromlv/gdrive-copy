@@ -103,7 +103,6 @@ export default class ChangeOwner extends React.Component {
       followShortcuts: false,
       srcFolderID: '',
       srcFolderName: '',
-      copyTo: 'same',
       newOwnerEmail: ''
     });
   }
@@ -266,7 +265,7 @@ export default class ChangeOwner extends React.Component {
             <StepLabel>Select folder</StepLabel>
           </Step>
           <Step>
-            <StepLabel>New onwer email</StepLabel>
+            <StepLabel>New owner email</StepLabel>
           </Step>
           <Step>
             <StepLabel>Review and confirm</StepLabel>
