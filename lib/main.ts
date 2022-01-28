@@ -234,7 +234,8 @@ export function changeOwner(): void {
           userProperties,
           ss,
           properties.newOwnerEmail,
-          properties.followShortcuts);
+          properties.followShortcuts,
+          properties.removePermissions);
       } else {
         Logger.log('No children found.');
       }
@@ -252,3 +253,4 @@ export function changeOwner(): void {
   // Cleanup
   Util.cleanup(properties, fileList, userProperties, timer, ss, gDriveService);
 }
+

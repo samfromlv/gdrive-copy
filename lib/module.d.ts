@@ -24,6 +24,7 @@ type ChangeOwnerFrontEndOptions = {
   srcFolderName: string;
   newOwnerEmail: string;
   followShortcuts: boolean;
+  removePermissions: boolean;
   spreadsheetId?: string;
   propertiesDocId?: string;
   leftovers?: gapi.client.drive.FileListResource;

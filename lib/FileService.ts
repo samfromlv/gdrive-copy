@@ -116,6 +116,8 @@ export default class FileService {
     return false;
   }
 
+
+
   createShortcut(
     currentFolderId: string,
     originalFile: gapi.client.drive.FileResource,
@@ -237,6 +239,31 @@ export default class FileService {
     }
   }
 
+
+  removeAllPermissions(
+    srcId: string
+  ): boolean {
+    var permissions, i;
+
+    try {
+      permissions = this.gDriveService.getPermissions(srcId).items;
+    } catch (e) {
+      Logging.log({ status: Util.composeErrorMsg(e) });
+    }
+
+    if (permissions && permissions.length > 0) {
+      for (i = 0; i < permissions.length; i++) {
+        try {
+          if (permissions[i].role == 'owner') continue;
+          this.gDriveService.removePermission(srcId, permissions[i].id);
+        } catch (e) { }
+      }
+      return true;
+    }
+    return false;
+  }
+
+
   /**
    * Process leftover files from prior query results
    * that weren't processed before script timed out.
@@ -259,7 +286,7 @@ export default class FileService {
   ): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
-      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.leftovers.items, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts);
+      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.leftovers.items, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts, this.properties.removePermissions);
     }
   }
 
@@ -279,7 +306,7 @@ export default class FileService {
   ): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
-      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts);
+      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts, this.properties.removePermissions);
     }
   }
 
@@ -402,7 +429,8 @@ export default class FileService {
     userProperties: GoogleAppsScript.Properties.UserProperties,
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     newOwnerEmail: string,
-    followSchortcuts: boolean
+    followShortcuts: boolean,
+    removePermissions: boolean
   ): void {
     while (items.length > 0 && this.timer.canContinue()) {
       // Get next file from passed file list.
@@ -431,9 +459,10 @@ export default class FileService {
       // Copy each (files and folders are both represented the same in Google Drive)
       try {
 
-        let changed: boolean = false;
+        let changedOwner: boolean = false;
+        let removedPermissions: boolean = false;
         if (item.mimeType == MimeType.SHORTCUT) {
-          if (!followSchortcuts) {
+          if (!followShortcuts) {
             continue;
           }
           let shortcutDetails = this.gDriveService.getShortcutDetails(item.id);
@@ -446,14 +475,33 @@ export default class FileService {
             mimeType: shortcutDetails.targetMimeType,
             owners: item.owners
           };
-          changed = this.changeOwner(currentFolderId, <gapi.client.drive.FileResource>shortcutTarget, newOwnerEmail);
+          if (shortcutTarget.owners[0].isAuthenticatedUser) {
+            if (removePermissions) {
+              removedPermissions = this.removeAllPermissions(item.id);
+            }
+            if (newOwnerEmail) {
+              changedOwner = this.changeOwner(currentFolderId, <gapi.client.drive.FileResource>shortcutTarget, newOwnerEmail);
+            }
+          }
         }
         else {
-          changed = this.changeOwner(currentFolderId, item, newOwnerEmail);
+          if (item.owners[0].isAuthenticatedUser) {
+            if (removePermissions) {
+              removedPermissions = this.removeAllPermissions(item.id);
+            }
+            if (newOwnerEmail) {
+              changedOwner = this.changeOwner(currentFolderId, item, newOwnerEmail);
+            }
+          }
         }
-        // log the new file as successful
-        if (changed) {
+        if (changedOwner && removedPermissions) {
+          Logging.logChangeOwnerAndRemovePermissionSuccess(ss, item, this.properties.timeZone, newOwnerEmail);
+        }
+        else if (changedOwner) {
           Logging.logChangeOwnerSuccess(ss, item, this.properties.timeZone, newOwnerEmail);
+        }
+        else if (removedPermissions) {
+          Logging.logRemovePermissionsSuccess(ss, item, this.properties.timeZone);
         }
       } catch (e) {
         this.properties.retryQueue.unshift({

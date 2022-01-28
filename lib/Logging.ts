@@ -143,6 +143,21 @@ export default class Logging {
     });
   }
 
+  static logChangeOwnerAndRemovePermissionSuccess(
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    original: gapi.client.drive.FileResource,
+    timeZone: string,
+    newOwnerEmail: string
+  ): void {
+    Logging.log({
+      ss,
+      status: 'Permissions removed and owner set to ' + newOwnerEmail,
+      title: original.title,
+      originalId: original.id,
+      timeZone
+    });
+  }
+
   static logChangeOwnerSuccess(
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     original: gapi.client.drive.FileResource,
@@ -152,6 +167,20 @@ export default class Logging {
     Logging.log({
       ss,
       status: 'Owner set to ' + newOwnerEmail,
+      title: original.title,
+      originalId: original.id,
+      timeZone
+    });
+  }
+
+  static logRemovePermissionsSuccess(
+    ss: GoogleAppsScript.Spreadsheet.Sheet,
+    original: gapi.client.drive.FileResource,
+    timeZone: string
+  ): void {
+    Logging.log({
+      ss,
+      status: 'All permissions removed',
       title: original.title,
       originalId: original.id,
       timeZone

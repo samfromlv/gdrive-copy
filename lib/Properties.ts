@@ -18,6 +18,7 @@ export default class Properties {
   destId: string;
   newOwnerEmail: string;
   followShortcuts: boolean;
+  removePermissions: boolean;
   currFolderId?: string;
   spreadsheetId: string;
   propertiesDocId: string;
@@ -43,6 +44,7 @@ export default class Properties {
     this.destId = '';
     this.newOwnerEmail = '';
     this.followShortcuts = false;
+    this.removePermissions = false;
     this.spreadsheetId = '';
     this.propertiesDocId = '';
     this.leftovers = null;

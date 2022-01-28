@@ -31,6 +31,7 @@ export default class ChangeOwner extends React.Component {
       srcParentID: '',
       newOwnerEmail: '',
       followShortcuts: false,
+      removePermissions: false,
       success: false,
       successMsg: '',
       error: false,
@@ -101,6 +102,7 @@ export default class ChangeOwner extends React.Component {
       success: false,
       processing: false,
       followShortcuts: false,
+      removePermissions: false,
       srcFolderID: '',
       srcFolderName: '',
       newOwnerEmail: ''
@@ -151,7 +153,8 @@ export default class ChangeOwner extends React.Component {
           srcFolderName: this.state.srcFolderName,
           srcParentID: this.state.srcParentID,
           newOwnerEmail: this.state.newOwnerEmail,
-          followShortcuts: this.state.followShortcuts
+          followShortcuts: this.state.followShortcuts,
+          removePermissions: this.state.removePermissions
         });
     } else {
       if (window.location.search.indexOf('testmode') !== -1) {
@@ -183,15 +186,15 @@ export default class ChangeOwner extends React.Component {
     });
   }
 
-  
-  
-  
+
+
+
   handleCheck(e) {
     const settings = {};
     settings[e.target.id] = e.target.checked;
     this.setState(settings);
   }
-  
+
   handleNewOwnerEmail(e) {
     this.setState({
       newOwnerEmail: e.target.value
@@ -265,7 +268,7 @@ export default class ChangeOwner extends React.Component {
             <StepLabel>Select folder</StepLabel>
           </Step>
           <Step>
-            <StepLabel>New owner email</StepLabel>
+            <StepLabel>Settings</StepLabel>
           </Step>
           <Step>
             <StepLabel>Review and confirm</StepLabel>
@@ -303,22 +306,40 @@ export default class ChangeOwner extends React.Component {
               floatingLabelText="New owner email"
               value={this.state.newOwnerEmail}
             />
-             <Checkbox
+            <br />
+            Leave empty to keep yourself as owner
+            <br />
+            <br />
+            <br />
+            <Checkbox
+              checked={this.state['removePermissions']}
+              onCheck={this.handleCheck}
+              id="removePermissions"
+              label={
+                <span>
+                  Remove all user permissions and make restricted
+                </span>
+              }
+            />
+            <br />
+            <br />
+            <br />
+            <br />
+            <Checkbox
               checked={this.state['followShortcuts']}
               onCheck={this.handleCheck}
               id="followShortcuts"
               label={
                 <span>
                   Follow shortcuts
-                  <br />
-                  <br />
-                  Tool will crawl all shortcuts and change owner in referenced folders
-                  and their subfolders, even if they are outside selected folder.
-                  Please be carefull, this may produce unexpected results.
-                  Use Drive search, type:shortcut and search within folder to see all shortcuts.
                 </span>
               }
             />
+            <br />
+            Tool will crawl all shortcuts and change owner in referenced folders
+            and their subfolders, even if they are outside selected folder.
+            Please be carefull, this may produce unexpected results.
+            Use Drive search, type:shortcut and search within folder to see all shortcuts.
             <div className="controls">
               <FlatButton
                 label="Go back"
@@ -345,7 +366,14 @@ export default class ChangeOwner extends React.Component {
               <br />
               <br />
               <h3>New owner email</h3>
-              <span>{this.state.newOwnerEmail}</span>
+              <span>{this.state.newOwnerEmail ? this.state.newOwnerEmail : "<keep me as owner>"}</span>
+
+              <br />
+              <br />
+              <h3>Remove permissions and make restricted?</h3>
+              <div>
+                {this.state.removePermissions ? 'Yes' : 'No'}
+              </div>
 
               <br />
               <br />
@@ -353,7 +381,7 @@ export default class ChangeOwner extends React.Component {
               <div>
                 {this.state.followShortcuts ? 'Yes' : 'No'}
               </div>
-             
+
             </Panel>
 
             <div className="controls">
