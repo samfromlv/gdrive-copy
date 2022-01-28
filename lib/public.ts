@@ -216,6 +216,16 @@ export function initializeChangeOwner(
   );
   Properties.save(options, gDriveService);
 
+  var srcFolder = gDriveService.getFile(options.srcFolderID);
+  if (srcFolder.owners[0].isAuthenticatedUser) {
+    if (options.removePermissions) {
+      fileService.removeAllPermissions(srcFolder.id);
+    }
+    if (options.newOwnerEmail) {
+      fileService.changeOwner(srcFolder.id, options.newOwnerEmail);
+    }
+  }
+
   // Delete all existing triggers so no scripts overlap
   deleteAllTriggers();
 
@@ -248,12 +258,12 @@ export function getUserEmail(): string {
  */
 export function resume(
   options: FrontEndOptions
-): { spreadsheetId: string; resuming: boolean, isOwnerChange:boolean } {
+): { spreadsheetId: string; resuming: boolean, isOwnerChange: boolean } {
   var gDriveService = new GDriveService(),
     timer = new Timer(),
     properties = new Properties(gDriveService),
     fileService = new FileService(gDriveService, timer, properties);
-    
+
   var priorCopy = fileService.findPriorCopy(options.srcFolderID);
 
   Properties.setUserPropertiesStore(

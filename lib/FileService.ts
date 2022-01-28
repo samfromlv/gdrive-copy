@@ -88,32 +88,20 @@ export default class FileService {
   }
 
   changeOwner(
-    currentFolderId: string,
-    file: gapi.client.drive.FileResource,
+    fileId: string,
     newOwnerEmail: string
-  ): boolean {
-
-    // if folder, use insert, else use copy
-    if (file.mimeType == MimeType.FOLDER) {
-      // Update list of remaining folders
-      this.properties.remaining.push(file.id);
-    }
-    if (file.owners[0].isAuthenticatedUser) {
-      this.gDriveService.insertPermission(
-        API.permissionBodyValue(
-          "owner",
-          "user",
-          newOwnerEmail
-        ),
-        file.id,
-        {
-          sendNotificationEmails: 'false'
-        }
-      );
-
-      return true;
-    }
-    return false;
+  ) {
+    this.gDriveService.insertPermission(
+      API.permissionBodyValue(
+        "owner",
+        "user",
+        newOwnerEmail
+      ),
+      fileId,
+      {
+        sendNotificationEmails: 'false'
+      }
+    );
   }
 
 
@@ -467,30 +455,40 @@ export default class FileService {
           }
           let shortcutDetails = this.gDriveService.getShortcutDetails(item.id);
           let targetId = shortcutDetails.targetId;
-          var shortcutTarget = {
-            id: targetId,
-            title: item.title,
-            description: item.description,
-            parents: item.parents,
-            mimeType: shortcutDetails.targetMimeType,
-            owners: item.owners
-          };
+
+          var shortcutTarget = this.gDriveService.getFile(targetId);
+
+          // if folder, use insert, else use copy
+          if (shortcutTarget.mimeType == MimeType.FOLDER) {
+            // Update list of remaining folders
+            this.properties.remaining.push(shortcutTarget.id);
+          }
+
           if (shortcutTarget.owners[0].isAuthenticatedUser) {
             if (removePermissions) {
-              removedPermissions = this.removeAllPermissions(item.id);
+              removedPermissions = this.removeAllPermissions(shortcutTarget.id);
             }
             if (newOwnerEmail) {
-              changedOwner = this.changeOwner(currentFolderId, <gapi.client.drive.FileResource>shortcutTarget, newOwnerEmail);
+              this.changeOwner(shortcutTarget.id, newOwnerEmail);
+              changedOwner = true;
             }
           }
         }
         else {
+
+          // if folder, use insert, else use copy
+          if (item.mimeType == MimeType.FOLDER) {
+            // Update list of remaining folders
+            this.properties.remaining.push(item.id);
+          }
+
           if (item.owners[0].isAuthenticatedUser) {
             if (removePermissions) {
               removedPermissions = this.removeAllPermissions(item.id);
             }
             if (newOwnerEmail) {
-              changedOwner = this.changeOwner(currentFolderId, item, newOwnerEmail);
+              this.changeOwner(item.id, newOwnerEmail);
+              changedOwner = true;
             }
           }
         }

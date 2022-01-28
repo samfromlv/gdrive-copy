@@ -268,7 +268,7 @@ export default class ChangeOwner extends React.Component {
             <StepLabel>Select folder</StepLabel>
           </Step>
           <Step>
-            <StepLabel>Settings</StepLabel>
+            <StepLabel>Permissions settings</StepLabel>
           </Step>
           <Step>
             <StepLabel>Review and confirm</StepLabel>
@@ -297,7 +297,7 @@ export default class ChangeOwner extends React.Component {
             )}
           </Page>
 
-          <Page label="Enter new owner email" stepNum={1}>
+          <Page label="Permissions settings" stepNum={1}>
             <TextField
               key="newOwnerEmail"
               id="newOwnerEmail"
@@ -322,6 +322,7 @@ export default class ChangeOwner extends React.Component {
               }
             />
             <br />
+            This setting removes all permission from files where you are an owner
             <br />
             <br />
             <br />
@@ -391,7 +392,7 @@ export default class ChangeOwner extends React.Component {
                 style={{ marginRight: '1em' }}
               />
               <RaisedButton
-                label="Change Owner"
+                label="Go!"
                 primary={true}
                 onClick={this.handleSubmit}
               />

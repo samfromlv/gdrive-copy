@@ -3192,7 +3192,7 @@
                     label: this.state.processingMsg
                 }), this.state.error && !this.state.success && s.default.createElement(x.default, null, this.state.errorMsg), s.default.createElement(A.Stepper, {
                     activeStep: this.state.stepNum
-                }, s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Select folder")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Settings")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Review and confirm"))), s.default.createElement(y.default, {
+                }, s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Select folder")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Permissions settings")), s.default.createElement(A.Step, null, s.default.createElement(A.StepLabel, null, "Review and confirm"))), s.default.createElement(y.default, {
                     activeStep: this.state.stepNum
                 }, s.default.createElement(v.default, {
                     stepNum: 0,
@@ -3212,7 +3212,7 @@
                     primary: !0,
                     label: "Next"
                 }))), s.default.createElement(v.default, {
-                    label: "Enter new owner email",
+                    label: "Permissions settings",
                     stepNum: 1
                 }, s.default.createElement(I.default, {
                     key: "newOwnerEmail",
@@ -3226,7 +3226,7 @@
                     onCheck: this.handleCheck,
                     id: "removePermissions",
                     label: s.default.createElement("span", null, "Remove all user permissions and make restricted")
-                }), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement(N.default, {
+                }), s.default.createElement("br", null), "This setting removes all permission from files where you are an owner", s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement("br", null), s.default.createElement(N.default, {
                     checked: this.state.followShortcuts,
                     onCheck: this.handleCheck,
                     id: "followShortcuts",
@@ -3258,7 +3258,7 @@
                         marginRight: "1em"
                     }
                 }), s.default.createElement(M.default, {
-                    label: "Change Owner",
+                    label: "Go!",
                     primary: !0,
                     onClick: this.handleSubmit
                 })))), !1);
