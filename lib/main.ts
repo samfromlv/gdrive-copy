@@ -54,7 +54,7 @@ export function copy(): void {
       userProperties.setProperty('trials', (n + 1).toString());
 
       Util.exponentialBackoff(
-        TriggerService.createTrigger,
+        (duration) => TriggerService.createTrigger('copy', duration),
         ErrorMessages.SettingTrigger
       );
     }
@@ -69,7 +69,7 @@ export function copy(): void {
   // or if the stop flag is set.
   timer.update(userProperties);
   var duration = timer.calculateTriggerDuration(properties);
-  TriggerService.createTrigger(duration);
+  TriggerService.createTrigger('copy', duration);
 
   // Process leftover files from prior query results
   fileService.handleLeftovers(userProperties, ss);
@@ -170,7 +170,7 @@ export function changeOwner(): void {
       userProperties.setProperty('trials', (n + 1).toString());
 
       Util.exponentialBackoff(
-        TriggerService.createTrigger,
+        (duration) => TriggerService.createTrigger('changeOwner', duration),
         ErrorMessages.SettingTrigger
       );
     }
@@ -185,7 +185,7 @@ export function changeOwner(): void {
   // or if the stop flag is set.
   timer.update(userProperties);
   var duration = timer.calculateTriggerDuration(properties);
-  TriggerService.createTrigger(duration);
+  TriggerService.createTrigger('changeOwner', duration);
 
   // Process leftover files from prior query results
   fileService.handleLeftoversChangeOwner(userProperties, ss);

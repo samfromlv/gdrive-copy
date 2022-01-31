@@ -64,7 +64,7 @@ export default class Timer {
   calculateTriggerDuration(properties: Properties): number {
     return properties.checkMaxRuntime()
       ? Timer.SLEEP_TIME_ONE_DAY
-      : Timer.TRIGGER_TIME - this.runtime;
+      : Timer.TRIGGER_TIME;
   }
 
   static now(): number {

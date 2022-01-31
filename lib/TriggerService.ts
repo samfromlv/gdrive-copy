@@ -11,11 +11,11 @@ export default class TriggerService {
    * Create a trigger to run copy() in 121 seconds.
    * Save trigger ID to userProperties so it can be deleted later
    */
-  static createTrigger(duration: number): void {
+  static createTrigger(functionName:string,  duration: number): void {
     // default is 6.2 minutes from now
     // Timer will stop execution after 4.7 minutes, so this gives about 1.5 minutes buffer
     duration = duration || Timer.TRIGGER_TIME;
-    var trigger = ScriptApp.newTrigger('copy')
+    var trigger = ScriptApp.newTrigger(functionName)
       .timeBased()
       .after(duration)
       .create();
