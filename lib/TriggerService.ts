@@ -17,7 +17,7 @@ export default class TriggerService {
     duration = duration || Timer.TRIGGER_TIME;
     var trigger = ScriptApp.newTrigger(functionName)
       .timeBased()
-      .after(duration)
+      .everyMinutes(duration / (1000 * 60))
       .create();
 
     if (trigger) {
