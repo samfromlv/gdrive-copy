@@ -57,7 +57,7 @@ export default class Logging {
     title = '',
     originalId = '',
     id = '',
-    timeZone = 'GMT-7',
+    timeZone = 'UTC+2',
     parentId = '',
     fileSize = 0
   }: {

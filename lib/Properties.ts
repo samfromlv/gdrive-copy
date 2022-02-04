@@ -51,7 +51,7 @@ export default class Properties {
     this.retryQueue = [];
     this.folderIdMap = {};
     this.remaining = [];
-    this.timeZone = 'GMT-7';
+    this.timeZone = 'UTC+2';
     this.totalRuntime = 0;
     this.completed = {};
 

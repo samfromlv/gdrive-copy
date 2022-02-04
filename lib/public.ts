@@ -89,7 +89,7 @@ export function initialize(
       spreadsheet.id
     ).getSpreadsheetTimeZone();
   } catch (e) {
-    options.timeZone = 'GMT-7';
+    options.timeZone = 'UTC+2';
   }
 
   // Adding a row to status list prevents weird style copying when logging
@@ -181,7 +181,7 @@ export function initializeChangeOwner(
       spreadsheet.id
     ).getSpreadsheetTimeZone();
   } catch (e) {
-    options.timeZone = 'GMT-7';
+    options.timeZone = 'UTC+2';
   }
 
   // Adding a row to status list prevents weird style copying when logging
