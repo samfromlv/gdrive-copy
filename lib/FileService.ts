@@ -614,7 +614,7 @@ export default class FileService {
 
     try {
       var propsFile = p.items[0];
-      var newOwnerEmailMatch = /NewOwner:{{(.+)}}/.exec(propsFile.title)
+      var newOwnerEmailMatch = /NewOwner{{(.*)}}/.exec(propsFile.title)
 
       var isOwnerChange = newOwnerEmailMatch && newOwnerEmailMatch.length == 2;
       return {

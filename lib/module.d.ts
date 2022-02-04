@@ -20,6 +20,8 @@ type FrontEndOptions = {
 };
 
 type ChangeOwnerFrontEndOptions = {
+  logFolderID: string;
+  logFolderName: string;
   srcFolderID: string;
   srcFolderName: string;
   newOwnerEmail: string;

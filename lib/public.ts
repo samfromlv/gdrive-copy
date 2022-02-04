@@ -151,8 +151,8 @@ export function initializeChangeOwner(
     fileService = new FileService(gDriveService, timer, properties);
 
   // Create Files used in copy process
-  spreadsheet = fileService.createLoggerSpreadsheet(today, options.srcFolderID);
-  propertiesDocId = fileService.createPropertiesDocumentChangeOwner(options.srcFolderID, options.newOwnerEmail);
+  spreadsheet = fileService.createLoggerSpreadsheet(today, options.logFolderID || options.srcFolderID);
+  propertiesDocId = fileService.createPropertiesDocumentChangeOwner(options.logFolderID || options.srcFolderID, options.newOwnerEmail);
 
   // Build/add properties to options so it can be saved to the properties doc
   options.spreadsheetId = spreadsheet.id;

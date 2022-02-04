@@ -29,6 +29,9 @@ export default class ChangeOwner extends React.Component {
       srcFolderID: '',
       srcFolderName: '',
       srcParentID: '',
+      logFolderID: '',
+      logFolderName: '',
+      logParentID: '',
       newOwnerEmail: '',
       followShortcuts: false,
       removePermissions: false,
@@ -42,6 +45,7 @@ export default class ChangeOwner extends React.Component {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleFolderSelect = this.handleFolderSelect.bind(this);
+    this.handleLogFolderSelect = this.handleLogFolderSelect.bind(this);
     this.handleNewOwnerEmail = this.handleNewOwnerEmail.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
     this.nextView = this.nextView.bind(this);
@@ -149,6 +153,9 @@ export default class ChangeOwner extends React.Component {
           _this.showError(err.message);
         })
         .initializeChangeOwner({
+          logFolderID: this.state.logFolderID,
+          logFolderName: this.state.logFolderName,
+          logParentID: this.state.logParentID,
           srcFolderID: this.state.srcFolderID,
           srcFolderName: this.state.srcFolderName,
           srcParentID: this.state.srcParentID,
@@ -183,6 +190,16 @@ export default class ChangeOwner extends React.Component {
       srcFolderID: id,
       srcFolderName: name,
       srcParentID: parentID
+    });
+  }
+
+  handleLogFolderSelect(id, name, parentID) {
+    this.setState({
+      processing: false,
+      error: false,
+      logFolderID: id,
+      logFolderName: name,
+      logParentID: parentID
     });
   }
 
@@ -326,6 +343,20 @@ export default class ChangeOwner extends React.Component {
             <br />
             <br />
             <br />
+            <SelectFolder
+              handleFolderSelect={this.handleLogFolderSelect}
+              showError={this.showError}
+              processing={this.processing}
+              picker={this.picker}
+              folderID={this.state.logFolderID}
+              folderName={this.state.logFolderName}
+              reset={this.clearSelection('logFolderID', 'logFolderName')}
+            />
+            <br />
+            If you have only view permission on target folder, you need to select different folder with write access to create log files. To use same folder leave empty.
+            <br/>
+            <br/>
+            <br/>
             <Checkbox
               checked={this.state['followShortcuts']}
               onCheck={this.handleCheck}
@@ -375,6 +406,14 @@ export default class ChangeOwner extends React.Component {
               <div>
                 {this.state.removePermissions ? 'Yes' : 'No'}
               </div>
+              <br />
+              <br />
+
+              <h3>Where to store operation log?</h3>
+              <FolderLink
+                folderID={this.state.logFolderID || this.state.srcFolderID}
+                name={this.state.logFolderName || this.state.srcFolderName}
+                />
 
               <br />
               <br />
