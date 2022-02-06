@@ -37,6 +37,7 @@ export function copy(): void {
   // Delete previous trigger
   TriggerService.deleteTrigger(triggerId);
 
+ 
   // Load properties.
   // If loading properties fails, return the function and
   // set a trigger to retry in 6 minutes.
@@ -180,10 +181,10 @@ export function changeOwner(): void {
   // Initialize logger spreadsheet
   ss = gDriveService.openSpreadsheet(properties.spreadsheetId);
 
+  timer.update(userProperties);
   // Create trigger for next run.
   // This trigger will be deleted if script finishes successfully
   // or if the stop flag is set.
-  timer.update(userProperties);
   var duration = timer.calculateTriggerDuration(properties);
   TriggerService.createTrigger('changeOwner', duration);
 
@@ -215,6 +216,23 @@ export function changeOwner(): void {
     // build query
     query = '"' + currFolder + '" in parents and trashed = false';
 
+    if (properties.onlyFolders) {
+      if (properties.followShortcuts) {
+        query += " and (mimeType = 'application/vnd.google-apps.folder' or mimeType = 'application/vnd.google-apps.shortcut')"
+      }
+      else {
+        query += " and mimeType = 'application/vnd.google-apps.folder'"
+      }
+    }
+    else{
+      if (properties.followShortcuts) {
+        query += " and (mimeType = 'application/vnd.google-apps.folder' or mimeType = 'application/vnd.google-apps.shortcut' or 'me' in owners)"
+      }
+      else {
+        query += " and (mimeType = 'application/vnd.google-apps.folder' or 'me' in owners)"
+      }
+    }
+
     // Query Drive to get the fileList (children) of the current folder, currFolder
     // Repeat if pageToken exists (i.e. more than 1000 results return from the query)
     do {
@@ -235,6 +253,7 @@ export function changeOwner(): void {
           ss,
           properties.newOwnerEmail,
           properties.followShortcuts,
+          properties.onlyFolders,
           properties.removePermissions);
       } else {
         Logger.log('No children found.');

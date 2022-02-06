@@ -26,6 +26,7 @@ type ChangeOwnerFrontEndOptions = {
   srcFolderName: string;
   newOwnerEmail: string;
   followShortcuts: boolean;
+  onlyFolders: boolean;
   removePermissions: boolean;
   spreadsheetId?: string;
   propertiesDocId?: string;

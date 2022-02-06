@@ -229,24 +229,29 @@ export default class FileService {
 
 
   removeAllPermissions(
-    srcId: string
+    srcId: string,
+    permissions: gapi.client.drive.PermissionResource[]
   ): boolean {
-    var permissions, i;
+    var i;
 
-    try {
-      permissions = this.gDriveService.getPermissions(srcId).items;
-    } catch (e) {
-      Logging.log({ status: Util.composeErrorMsg(e) });
+    if (!permissions) {
+      try {
+        permissions = this.gDriveService.getPermissions(srcId).items;
+      } catch (e) {
+        Logging.log({ status: Util.composeErrorMsg(e) });
+      }
     }
 
     if (permissions && permissions.length > 0) {
       for (i = 0; i < permissions.length; i++) {
+        var hasChanges = false;
         try {
           if (permissions[i].role == 'owner') continue;
+          hasChanges = true;
           this.gDriveService.removePermission(srcId, permissions[i].id);
         } catch (e) { }
       }
-      return true;
+      return hasChanges;
     }
     return false;
   }
@@ -274,7 +279,7 @@ export default class FileService {
   ): void {
     if (Util.hasSome(this.properties.leftovers, 'items')) {
       this.properties.currFolderId = this.properties.leftovers.items[0].parents[0].id;
-      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.leftovers.items, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts, this.properties.removePermissions);
+      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.leftovers.items, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts, this.properties.onlyFolders, this.properties.removePermissions);
     }
   }
 
@@ -294,7 +299,7 @@ export default class FileService {
   ): void {
     if (Util.hasSome(this.properties, 'retryQueue')) {
       this.properties.currFolderId = this.properties.retryQueue[0].parents[0].id;
-      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts, this.properties.removePermissions);
+      this.processFileListChangeOwner(this.properties.currFolderId, this.properties.retryQueue, userProperties, ss, this.properties.newOwnerEmail, this.properties.followShortcuts, this.properties.onlyFolders, this.properties.removePermissions);
     }
   }
 
@@ -418,6 +423,7 @@ export default class FileService {
     ss: GoogleAppsScript.Spreadsheet.Sheet,
     newOwnerEmail: string,
     followShortcuts: boolean,
+    onlyFolders: boolean,
     removePermissions: boolean
   ): void {
     while (items.length > 0 && this.timer.canContinue()) {
@@ -463,10 +469,13 @@ export default class FileService {
             // Update list of remaining folders
             this.properties.remaining.push(shortcutTarget.id);
           }
+          else if (onlyFolders) {
+            continue;
+          }
 
           if (shortcutTarget.owners[0].isAuthenticatedUser) {
             if (removePermissions) {
-              removedPermissions = this.removeAllPermissions(shortcutTarget.id);
+              removedPermissions = this.removeAllPermissions(shortcutTarget.id, shortcutTarget.permissions);
             }
             if (newOwnerEmail) {
               this.changeOwner(shortcutTarget.id, newOwnerEmail);
@@ -481,10 +490,13 @@ export default class FileService {
             // Update list of remaining folders
             this.properties.remaining.push(item.id);
           }
+          else if (onlyFolders) {
+            continue;
+          }
 
           if (item.owners[0].isAuthenticatedUser) {
             if (removePermissions) {
-              removedPermissions = this.removeAllPermissions(item.id);
+              removedPermissions = this.removeAllPermissions(item.id, item.permissions);
             }
             if (newOwnerEmail) {
               this.changeOwner(item.id, newOwnerEmail);

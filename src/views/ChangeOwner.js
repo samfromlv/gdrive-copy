@@ -34,6 +34,7 @@ export default class ChangeOwner extends React.Component {
       logParentID: '',
       newOwnerEmail: '',
       followShortcuts: false,
+      onlyFolders: false,
       removePermissions: false,
       success: false,
       successMsg: '',
@@ -106,6 +107,7 @@ export default class ChangeOwner extends React.Component {
       success: false,
       processing: false,
       followShortcuts: false,
+      onlyFolders: false,
       removePermissions: false,
       srcFolderID: '',
       srcFolderName: '',
@@ -161,6 +163,7 @@ export default class ChangeOwner extends React.Component {
           srcParentID: this.state.srcParentID,
           newOwnerEmail: this.state.newOwnerEmail,
           followShortcuts: this.state.followShortcuts,
+          onlyFolders: this.state.onlyFolders,
           removePermissions: this.state.removePermissions
         });
     } else {
@@ -343,6 +346,21 @@ export default class ChangeOwner extends React.Component {
             <br />
             <br />
             <br />
+            <Checkbox
+              checked={this.state['onlyFolders']}
+              onCheck={this.handleCheck}
+              id="onlyFolders"
+              label={
+                <span>
+                  Update only folders
+                </span>
+              }
+            />
+            <br />
+            If set operation will update only folders and skip all the files
+            <br />
+            <br />
+            <br />
             <SelectFolder
               handleFolderSelect={this.handleLogFolderSelect}
               showError={this.showError}
@@ -420,6 +438,13 @@ export default class ChangeOwner extends React.Component {
               <h3>Follow shortcuts?</h3>
               <div>
                 {this.state.followShortcuts ? 'Yes' : 'No'}
+              </div>
+
+              <br />
+              <br />
+              <h3>Only folders?</h3>
+              <div>
+                {this.state.onlyFolders ? 'Yes' : 'No'}
               </div>
 
             </Panel>

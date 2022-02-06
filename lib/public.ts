@@ -89,7 +89,7 @@ export function initialize(
       spreadsheet.id
     ).getSpreadsheetTimeZone();
   } catch (e) {
-    options.timeZone = 'UTC+2';
+    options.timeZone = 'UTC';
   }
 
   // Adding a row to status list prevents weird style copying when logging
@@ -181,7 +181,7 @@ export function initializeChangeOwner(
       spreadsheet.id
     ).getSpreadsheetTimeZone();
   } catch (e) {
-    options.timeZone = 'UTC+2';
+    options.timeZone = 'UTC';
   }
 
   // Adding a row to status list prevents weird style copying when logging
@@ -219,7 +219,7 @@ export function initializeChangeOwner(
   var srcFolder = gDriveService.getFile(options.srcFolderID);
   if (srcFolder.owners[0].isAuthenticatedUser) {
     if (options.removePermissions) {
-      fileService.removeAllPermissions(srcFolder.id);
+      fileService.removeAllPermissions(srcFolder.id, srcFolder.permissions);
     }
     if (options.newOwnerEmail) {
       fileService.changeOwner(srcFolder.id, options.newOwnerEmail);

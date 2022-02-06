@@ -18,6 +18,7 @@ export default class Properties {
   destId: string;
   newOwnerEmail: string;
   followShortcuts: boolean;
+  onlyFolders: boolean;
   removePermissions: boolean;
   currFolderId?: string;
   spreadsheetId: string;
@@ -44,6 +45,7 @@ export default class Properties {
     this.destId = '';
     this.newOwnerEmail = '';
     this.followShortcuts = false;
+    this.onlyFolders = false;
     this.removePermissions = false;
     this.spreadsheetId = '';
     this.propertiesDocId = '';
@@ -51,7 +53,7 @@ export default class Properties {
     this.retryQueue = [];
     this.folderIdMap = {};
     this.remaining = [];
-    this.timeZone = 'UTC+2';
+    this.timeZone = 'UTC';
     this.totalRuntime = 0;
     this.completed = {};
 

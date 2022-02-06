@@ -9,7 +9,7 @@
 	"destId": "1KofQH_CeCW3qDlRDnAN9iQE8iNMjniI-",
 	"spreadsheetId": "14dNrBnfPVuO55vNsQXbaKKzY9KM7YZfJaISkXiCgyS0",
 	"propertiesDocId": "1PJNPuX-nqsvXFD940XuUgKxzmI6HLtEs",
-	"timeZone": "UTC+2",
+	"timeZone": "UTC",
 	"retryQueue": [],
 	"totalRuntime": 0,
 	"completed": {},

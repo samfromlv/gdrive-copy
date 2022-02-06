@@ -1,5 +1,5 @@
 {
-  "timeZone": "UTC+2",
+  "timeZone": "UTC",
   "dependencies": {
     "enabledAdvancedServices": [{
       "userSymbol": "Drive",
