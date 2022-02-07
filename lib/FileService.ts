@@ -243,8 +243,8 @@ export default class FileService {
     }
 
     if (permissions && permissions.length > 0) {
+      var hasChanges = false;
       for (i = 0; i < permissions.length; i++) {
-        var hasChanges = false;
         try {
           if (permissions[i].role == 'owner') continue;
           hasChanges = true;
